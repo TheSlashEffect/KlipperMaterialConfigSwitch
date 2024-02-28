@@ -1,0 +1,5 @@
+Material code,Material name,Hotend temperature,Bed temperature,Pressure advance k value
+PLA001,3DJake ecoPLA Black/White,210,55,0.215
+PLA002,Anycubic PLA,210,55,0.215
+ABS001,eSun ABS+ Purple,250,100,0.215
+ABS002,eSun ABS+ Black,250,100,0.215
