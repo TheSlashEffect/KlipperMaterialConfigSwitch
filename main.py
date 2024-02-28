@@ -14,32 +14,27 @@ def change_config_file(new_material_code):
 
     # Step 2: Check if file containing the desired code exists
     if not os.path.exists(new_config_file_location):
-        sys.stderr.write('File does not exist! Please check the configuration files')
+        sys.stderr.write('Material configuration file %s does not exist!\n' % new_config_file_location)
         sys.exit(-1)
 
     # Step 3: Check if file starts with a valid material code
     with open(new_config_file_location) as f:
         material_regex = '#[A-Z]{3}\d{3}$'
-
         new_config_material_code = f.readline().strip()
-
-        if re.match(material_regex, new_config_material_code):
-            print("Switching to material: ", new_config_material_code[1:])
-        else:
+        if not re.match(material_regex, new_config_material_code):
             sys.stderr.write(
                 "Provided file does not start with a valid material code: %s" % new_config_material_code)
             sys.exit(-1)
 
-    print('New config file material code: ', new_config_material_code)
     if new_config_material_code[1:] != new_material_code:
         sys.stderr.write('File %s\'s material code %s does not match file name %s' % (new_config_file_location,
                                                                                       new_config_material_code[1:],
                                                                                       new_material_code))
         sys.exit(-1)
 
-    print('New config file location:      ', new_config_file_location)
+    print("Switching to material %s - Config file: %s" % (new_config_material_code[1:], new_config_file_location))
 
-    # Step 4: Create backup of printer.cfg -> printer.cfg.bup
+    # Step 4: Create backup of original configuration
     shutil.copyfile('printer.cfg', 'printer.cfg.bup')
 
     # Step 5: Modify printer.cfg
@@ -54,6 +49,7 @@ def change_config_file(new_material_code):
                 f.write('[include %s/%s.cfg]\n' % (MATERIAL_DIRECTORY, new_material_code))
             else:
                 f.write(line)
+
 
 def printMaterialCodes():
     with open('index.csv', newline='') as csvfile:
