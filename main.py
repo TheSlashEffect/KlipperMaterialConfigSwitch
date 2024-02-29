@@ -19,7 +19,7 @@ def change_config_file(new_material_code):
 
     # Step 3: Check if file starts with a valid material code
     with open(new_config_file_location) as f:
-        material_regex = '#[A-Z]{3}\d{3}$'
+        material_regex = r"#[A-Z]{3}\d{3}$"
         new_config_material_code = f.readline().strip()
         if not re.match(material_regex, new_config_material_code):
             sys.stderr.write(
@@ -39,9 +39,9 @@ def change_config_file(new_material_code):
 
     # Step 5: Modify printer.cfg
     with open('printer.cfg', 'r+') as f:
-        include_directive_regex = '\[include ' + \
+        include_directive_regex = r"\[include " + \
                                   MATERIAL_DIRECTORY + \
-                                  '\/[A-Z]{3}\d{3}\.cfg\]'
+                                  r"\/[A-Z]{3}\d{3}\.cfg\]"
         old = f.readlines()
         f.seek(0)
         for line in old:
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     input_code = sys.argv[1]
 
     # Step 1
-    input_material_regex = '[A-Z]{3}\d{3}$'
+    input_material_regex = r"[A-Z]{3}\d{3}$"
     if not re.match(input_material_regex, input_code):
         sys.stderr.write('Input code error \'%s\'! Please provide a valid material code' % input_code)
         # TODO - Print index.csv
