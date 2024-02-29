@@ -51,13 +51,6 @@ def change_config_file(new_material_code):
                 f.write(line)
 
 
-def printMaterialCodes():
-    with open('index.csv', newline='') as csvfile:
-        spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
-        for row in spamreader:
-            print(', '.join(row))
-
-
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print('Usage: %s <material code>' % sys.argv[0])
@@ -68,7 +61,6 @@ if __name__ == '__main__':
     # Step 1
     if not re.match(MATERIAL_CODE_REGEX, input_code):
         sys.stderr.write('Input code error \'%s\'! Please provide a valid material code' % input_code)
-        # TODO - Print index.csv
         sys.exit(-1)
 
     change_config_file(input_code)
