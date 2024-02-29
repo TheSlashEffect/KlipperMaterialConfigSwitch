@@ -3,7 +3,8 @@
 I wanted to be able to switch between filaments without having to adjust filament dependent
 settings such as pid values, z offset (squish), etc. by hand.
 Most people achieve all or part of this functionality using their slicer, but I wanted something that worked regardless of the slicer used, and wouldn't have to depend on the gcode file.
-The python script and configuration layout shown here achieve that with gcode macros and only one simple requirement utility. 
+The python script and configuration layout shown here achieve that with gcode macros and only one simple requirement utility.
+This logic can be used to switch between other hardware as well, such as toolheads, nozzles, etc.
 
 ![](images/browserViewFull.PNG "")
 
@@ -12,7 +13,7 @@ Each material has its own configuration file.
 We can choose what parameters change, such as hotend/bed temperature, 
 pid values, or even things like minimum/maximum extrusion temperature.
 Based on what parameters we choose this can also apply to
-switching toolheads, nozzles, etc.
+switching between toolheads, nozzles, etc.
 
 
 printer.cfg now imports this file in the beginning, as such
