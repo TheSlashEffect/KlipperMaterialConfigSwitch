@@ -7,6 +7,7 @@ import shutil
 
 MATERIAL_DIRECTORY = '/home/fly/klipper_config/MaterialSpecificConfigs/'
 PRINTER_CONFIG_FILE = '/home/fly/klipper_config/printer.cfg'
+MATERIAL_CODE_REGEX = r"[A-Z]{3}\d{3}$"
 
 
 def change_config_file(new_material_code):
@@ -19,20 +20,19 @@ def change_config_file(new_material_code):
 
     # Step 3: Check if file starts with a valid material code
     with open(new_config_file_location) as f:
-        material_regex = r"#[A-Z]{3}\d{3}$"
-        new_config_material_code = f.readline().strip()
-        if not re.match(material_regex, new_config_material_code):
+        new_config_material_code = f.readline().strip()[1:]
+        if not re.match(MATERIAL_CODE_REGEX, new_config_material_code):
             sys.stderr.write(
                 "Provided file does not start with a valid material code: %s" % new_config_material_code)
             sys.exit(-1)
 
-    if new_config_material_code[1:] != new_material_code:
+    if new_config_material_code != new_material_code:
         sys.stderr.write('File %s\'s material code %s does not match file name %s' % (new_config_file_location,
-                                                                                      new_config_material_code[1:],
+                                                                                      new_config_material_code,
                                                                                       new_material_code))
         sys.exit(-1)
 
-    print("Switching to material %s - Config file: %s" % (new_config_material_code[1:], new_config_file_location))
+    print("Switching to material %s - Config file: %s" % (new_config_material_code, new_config_file_location))
 
     # Step 4: Create backup of original configuration
     shutil.copyfile(PRINTER_CONFIG_FILE, PRINTER_CONFIG_FILE + '.bup')
@@ -66,8 +66,7 @@ if __name__ == '__main__':
     input_code = sys.argv[1]
 
     # Step 1
-    input_material_regex = r"[A-Z]{3}\d{3}$"
-    if not re.match(input_material_regex, input_code):
+    if not re.match(MATERIAL_CODE_REGEX, input_code):
         sys.stderr.write('Input code error \'%s\'! Please provide a valid material code' % input_code)
         # TODO - Print index.csv
         sys.exit(-1)
