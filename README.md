@@ -15,6 +15,7 @@ pid values, or even things like minimum/maximum extrusion temperature.
 Based on what parameters we choose this can also apply to
 switching between toolheads, nozzles, etc.
 
+![](images/materialConfigView.PNG "")
 
 printer.cfg now imports this file in the beginning, as such
 
