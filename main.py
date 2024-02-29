@@ -5,8 +5,8 @@ import csv
 
 import shutil
 
-MATERIAL_DIRECTORY = 'MaterialSpecificConfigs'
-PRINTER_CONFIG_FILE = 'printer.cfg'
+MATERIAL_DIRECTORY = '/home/fly/klipper_config/MaterialSpecificConfigs/'
+PRINTER_CONFIG_FILE = '/home/fly/klipper_config/printer.cfg'
 
 
 def change_config_file(new_material_code):
@@ -35,10 +35,10 @@ def change_config_file(new_material_code):
     print("Switching to material %s - Config file: %s" % (new_config_material_code[1:], new_config_file_location))
 
     # Step 4: Create backup of original configuration
-    shutil.copyfile('printer.cfg', 'printer.cfg.bup')
+    shutil.copyfile(PRINTER_CONFIG_FILE, PRINTER_CONFIG_FILE + '.bup')
 
     # Step 5: Modify printer.cfg
-    with open('printer.cfg', 'r+') as f:
+    with open(PRINTER_CONFIG_FILE, 'r+') as f:
         include_directive_regex = r"\[include " + \
                                   MATERIAL_DIRECTORY + \
                                   r"\/[A-Z]{3}\d{3}\.cfg\]"
