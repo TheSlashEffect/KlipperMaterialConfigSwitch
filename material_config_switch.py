@@ -10,7 +10,7 @@ PRINTER_CONFIG_FILE = '/home/fly/klipper_config/printer.cfg'
 
 
 def change_config_file(new_material_code):
-    new_config_file_location = MATERIAL_DIRECTORY + '/' + new_material_code + '.cfg'
+    new_config_file_location = MATERIAL_DIRECTORY + new_material_code + '.cfg'
 
     # Step 2: Check if file containing the desired code exists
     if not os.path.exists(new_config_file_location):
