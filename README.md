@@ -55,7 +55,7 @@ Please review the code before using it!!!**
 
   4. Download material_config_switch.py and place it in any directory. Take note of this path.
 
-  5. Change "**MATERIAL_DIRECTORY**" to the path of your material specific configuration files.
+  5. Change "**MATERIAL_DIRECTORY**" to the directory containing your material specific configuration files.
 Change "**PRINTER_CONFIG_FILE**" to printer.cfg's location.
 
   6. In your printer.cfg, add the following entry. This calls the driver script.
