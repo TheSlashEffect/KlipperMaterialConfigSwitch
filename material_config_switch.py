@@ -34,7 +34,8 @@ def change_config_file(new_material_code):
                                                                                       new_material_code))
         sys.exit(-1)
 
-    print("Switching to material %s - Config file: %s" % (new_config_material_code, new_config_file_location))
+    print("Switching to material %s - Config file: %s" % (new_config_material_code, new_config_file_location),
+          flush=True)
 
     # Step 4: Create backup of original configuration
     shutil.copyfile(PRINTER_CONFIG_FILE, PRINTER_CONFIG_FILE + '.bup')
