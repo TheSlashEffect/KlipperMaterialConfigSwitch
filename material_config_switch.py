@@ -76,18 +76,17 @@ if __name__ == '__main__':
 
     change_config_file(input_code)
 
-    # Step 7: Restart klipper (firmware restart)
+    # Step 6: Restart klipper
     os.system("echo FIRMWARE_RESTART > /tmp/printer")
 
     '''
     Steps:
-    1. Confirm that the new material code complies with the regex format (DONE)
-    2. Check that a config file with the desired code exists (DONE)
-    3. Confirm that the file we're reading starts with a regex compliant material code (DONE)
-    4. Create backup of printer.cfg before altering it (printer.cfg.bup)
-    5. Replace the existing printer.cfg entry to the new one
-        using sed.
-    6. Restart klipper
+    1. Confirm that the user input material code complies with the regex format
+    2. Check that a config file with the desired code exists
+    3. Confirm that the file we're reading starts with a regex compliant material code
+    4. Create backup of printer.cfg before modifying it (printer.cfg.bup)
+    5. Update printer.cfg
+    6. Restart klipper (firmware restart)
     
     Bonus: Create index file for codes. If user did not provide input code, print it out
     '''
