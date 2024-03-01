@@ -5,7 +5,9 @@ import csv
 
 import shutil
 
+# Absolute path, must be under your klipper config directory
 MATERIAL_DIRECTORY = '/home/fly/klipper_config/MaterialSpecificConfigs/'
+# Absolute path
 PRINTER_CONFIG_FILE = '/home/fly/klipper_config/printer.cfg'
 MATERIAL_CODE_REGEX = r"[A-Z]{3}\d{3}$"
 
@@ -37,18 +39,27 @@ def change_config_file(new_material_code):
     # Step 4: Create backup of original configuration
     shutil.copyfile(PRINTER_CONFIG_FILE, PRINTER_CONFIG_FILE + '.bup')
 
+    # Relative to klipper
+    material_directory_relative = os.path.basename(os.path.normpath(MATERIAL_DIRECTORY))
+    success = False
     # Step 5: Modify printer.cfg
     with open(PRINTER_CONFIG_FILE, 'r+') as f:
         include_directive_regex = r"\[include " + \
-                                  MATERIAL_DIRECTORY + \
-                                  r"\/[A-Z]{3}\d{3}\.cfg\]"
+                                  material_directory_relative + r"\/" + \
+                                  MATERIAL_CODE_REGEX[:-1] + r".cfg\]"
         old = f.readlines()
         f.seek(0)
         for line in old:
             if re.match(include_directive_regex, line):
-                f.write('[include %s/%s.cfg]\n' % (MATERIAL_DIRECTORY, new_material_code))
+                success = True
+                f.write('[include %s/%s.cfg]\n' % (material_directory_relative, new_material_code))
             else:
                 f.write(line)
+
+    if not success:
+        sys.stderr.write('Did not find any include directive in file %s! No changes were made\n'
+                         % PRINTER_CONFIG_FILE)
+        sys.exit(-1)
 
 
 if __name__ == '__main__':
