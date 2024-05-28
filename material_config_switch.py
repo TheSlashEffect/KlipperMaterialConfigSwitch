@@ -90,7 +90,7 @@ def update_klipper_config_material_entry(new_material_code):
         handle_file_write_error(e)
 
 
-def change_config_file(new_material_code):
+def update_config_file(new_material_code):
     new_config_file_location = MATERIAL_DIRECTORY + new_material_code + '.cfg'
 
     check_material_config_file_existence(new_config_file_location)
@@ -133,7 +133,7 @@ def get_user_input_code(arguments):
 if __name__ == '__main__':
     input_code = get_user_input_code(sys.argv)
 
-    change_config_file(input_code)
+    update_config_file(input_code)
 
     # Restart klipper
     os.system("echo FIRMWARE_RESTART > /tmp/printer")
