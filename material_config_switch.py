@@ -9,6 +9,8 @@ MATERIAL_DIRECTORY = '/home/fly/klipper_config/MaterialSpecificConfigs/'
 # Absolute path
 PRINTER_CONFIG_FILE = '/home/fly/klipper_config/printer.cfg'
 MATERIAL_CODE_REGEX = r"[A-Z]{3}\d{3}$"
+MATERIAL_CODE_REGEX_EXAMPLE = 'PLA001'  # Leave empty if you don't want to add an example
+# MATERIAL_CODE_REGEX_EXAMPLE = ''  # Leave empty if you don't want to add an example
 
 
 def change_config_file(new_material_code):
@@ -62,17 +64,32 @@ def change_config_file(new_material_code):
         sys.exit(-1)
 
 
-if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print('Usage: %s <material code>' % sys.argv[0])
-        sys.exit()
-    # input_code = 'PLA002'
-    input_code = sys.argv[1]
+def print_material_code_regex():
+    sys.stderr.write('Configured material code regex is of form %s\n' % MATERIAL_CODE_REGEX)
+    if MATERIAL_CODE_REGEX_EXAMPLE != '':
+        sys.stderr.write('Example: %s\n' % MATERIAL_CODE_REGEX_EXAMPLE)
+    sys.stderr.flush()
+
+
+def get_user_input_code(arguments):
+    if len(arguments) < 2:
+        print('Usage: %s <material code>' % arguments[0])
+        print_material_code_regex()
+        sys.exit(-1)
+
+    user_input_code = sys.argv[1]
 
     # Step 1
-    if not re.match(MATERIAL_CODE_REGEX, input_code):
-        sys.stderr.write('Input code error \'%s\'! Please provide a valid material code' % input_code)
+    if not re.match(MATERIAL_CODE_REGEX, user_input_code):
+        sys.stderr.write('Input code error \'%s\'! Please provide a valid material code\n' % input_code)
+        print_material_code_regex()
         sys.exit(-1)
+
+    return user_input_code
+
+
+if __name__ == '__main__':
+    input_code = get_user_input_code(sys.argv)
 
     change_config_file(input_code)
 
