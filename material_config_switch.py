@@ -91,9 +91,12 @@ def read_file_content_as_lines(file_path):
 
 
 def write_updated_content(printer_config_file, file_contents):
-    klipper_config_file_write_stream = open(printer_config_file, 'w')
-    klipper_config_file_write_stream.writelines(file_contents)
-    klipper_config_file_write_stream.close()
+    try:
+        klipper_config_file_write_stream = open(printer_config_file, 'w')
+        klipper_config_file_write_stream.writelines(file_contents)
+        klipper_config_file_write_stream.close()
+    except Exception as e:
+        handle_file_write_error(e)
 
 
 # TODO - CHKA: Do not update file if new and existing entry match
@@ -108,10 +111,7 @@ def update_klipper_config_material_entry(new_material_code):
 
     file_contents[config_entry_line_index] = '[include %s/%s.cfg]\n' % (material_directory_relative, new_material_code)
 
-    try:
-        write_updated_content(PRINTER_CONFIG_FILE, file_contents)
-    except Exception as e:
-        handle_file_write_error(e)
+    write_updated_content(PRINTER_CONFIG_FILE, file_contents)
 
 
 def update_config_file(new_material_code):
