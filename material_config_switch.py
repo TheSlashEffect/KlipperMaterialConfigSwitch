@@ -16,10 +16,8 @@ MATERIAL_CODE_REGEX = r"[A-Z]{3}\d{3}$"
 MATERIAL_CODE_REGEX_EXAMPLE = 'PLA001'  # Leave empty if you don't want to add an example
 
 
-def check_material_config_file_existence(new_config_file_location):
-    if not os.path.exists(new_config_file_location):
-        sys.stderr.write('Material configuration file %s does not exist!\n' % new_config_file_location)
-        sys.exit(-1)
+def file_exists(new_config_file_location):
+    return os.path.exists(new_config_file_location)
 
 
 def check_material_config_file_code(new_config_file_path, new_material_code):
@@ -93,7 +91,9 @@ def update_klipper_config_material_entry(new_material_code):
 def update_config_file(new_material_code):
     new_config_file_location = MATERIAL_DIRECTORY + new_material_code + '.cfg'
 
-    check_material_config_file_existence(new_config_file_location)
+    if not file_exists(new_config_file_location):
+        sys.stderr.write('Material configuration file %s does not exist!\n' % new_config_file_location)
+        sys.exit(-1)
 
     check_material_config_file_code(new_config_file_location, new_material_code)
 
