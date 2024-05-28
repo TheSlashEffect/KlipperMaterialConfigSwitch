@@ -116,7 +116,7 @@ def update_config_file(new_material_code):
     if not file_exists(PRINTER_CONFIG_FILE):
         print_error_and_exit(print_error_and_exit('Printer config file %s does not exist!' % PRINTER_CONFIG_FILE))
 
-    new_config_file_location = MATERIAL_DIRECTORY + new_material_code + '.cfg'
+    new_config_file_location = os.path.join(MATERIAL_DIRECTORY, new_material_code + '.cfg')
     if not file_exists(new_config_file_location):
         print_error_and_exit('Material configuration file %s does not exist!\n' % new_config_file_location)
 
