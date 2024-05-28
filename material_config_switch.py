@@ -30,7 +30,7 @@ def file_exists(new_config_file_location):
 
 def check_material_config_file_code(new_config_file_path, new_material_code):
     with open(new_config_file_path) as f:
-        new_config_material_code = f.readline().strip()[1:]
+        new_config_material_code = f.readline().strip()[1:]  # Line is comment, starts with '#'
         if not re.match(MATERIAL_CODE_REGEX, new_config_material_code):
             print_error_and_exit(
                 "Provided file does not start with a valid material code: %s" % new_config_material_code)
