@@ -52,9 +52,16 @@ def handle_file_write_error(e):
     sys.stderr.write('Writing to klipper config file %s failed!'
                      % PRINTER_CONFIG_FILE)
     logging.exception(e)
-    sys.stderr.write('Attempting to recover from file %s\n' %
-                     PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION)
+
+    backup_file_name = PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION
+
+    if not file_exists(backup_file_name):
+        print_error_and_exit('No backup file %s found! Aborting...' % backup_file_name)
+
+    sys.stderr.write('Attempting to recover from file %s\n' % backup_file_name)
     sys.stderr.flush()
+
+    shutil.copyfile(backup_file_name, PRINTER_CONFIG_FILE)
     sys.exit(-1)
 
 
