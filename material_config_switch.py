@@ -20,6 +20,7 @@ material_directory_relative = os.path.basename(os.path.normpath(MATERIAL_DIRECTO
 
 def print_error_and_exit(error_message):
     sys.stderr.write(error_message)
+    # Flushing because the G-Code Shell Command Extension context we're running under handles output differently
     sys.stderr.flush()
     sys.exit(-1)
 
