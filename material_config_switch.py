@@ -44,6 +44,16 @@ def backup_klipper_config_file():
     shutil.copyfile(PRINTER_CONFIG_FILE, klipper_config_file_backup)
 
 
+def handle_file_write_error(e):
+    sys.stderr.write('Writing to klipper config file %s failed!'
+                     % PRINTER_CONFIG_FILE)
+    logging.exception(e)
+    sys.stderr.write('Attempting to recover from file %s\n' %
+                     PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION)
+    sys.stderr.flush()
+    sys.exit(-1)
+
+
 # TODO - CHKA: Do not update file if new and existing entry match
 def update_klipper_config_material_entry(new_material_code):
     # Relative to klipper directory
@@ -77,14 +87,7 @@ def update_klipper_config_material_entry(new_material_code):
         klipper_config_file_write_stream.writelines(file_contents)
         klipper_config_file_write_stream.close()
     except Exception as e:
-        # handle_file_write_error(e) TODO - CHKA: extract function for error handling
-        sys.stderr.write('Writing to klipper config file %s failed!'
-                         % PRINTER_CONFIG_FILE)
-        logging.exception(e)
-        sys.stderr.write('Attempting to recover from file %s\n' %
-                         PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION)
-        sys.stderr.flush()
-        sys.exit(-1)
+        handle_file_write_error(e)
 
 
 def change_config_file(new_material_code):
