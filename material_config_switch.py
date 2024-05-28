@@ -13,13 +13,16 @@ MATERIAL_CODE_REGEX_EXAMPLE = 'PLA001'  # Leave empty if you don't want to add a
 # MATERIAL_CODE_REGEX_EXAMPLE = ''  # Leave empty if you don't want to add an example
 
 
-def change_config_file(new_material_code):
-    new_config_file_location = MATERIAL_DIRECTORY + new_material_code + '.cfg'
-
-    # Step 2: Check if file containing the desired code exists
+def check_material_config_file_existence(new_config_file_location):
     if not os.path.exists(new_config_file_location):
         sys.stderr.write('Material configuration file %s does not exist!\n' % new_config_file_location)
         sys.exit(-1)
+
+
+def change_config_file(new_material_code):
+    new_config_file_location = MATERIAL_DIRECTORY + new_material_code + '.cfg'
+
+    check_material_config_file_existence(new_config_file_location)
 
     # Step 3: Check if file starts with a valid material code
     with open(new_config_file_location) as f:
