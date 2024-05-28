@@ -135,7 +135,7 @@ if __name__ == '__main__':
 
     change_config_file(input_code)
 
-    # Step 6: Restart klipper
+    # Restart klipper
     os.system("echo FIRMWARE_RESTART > /tmp/printer")
 
     '''
