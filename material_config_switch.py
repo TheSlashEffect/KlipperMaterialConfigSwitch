@@ -14,6 +14,8 @@ PRINTER_CONFIG_FILE = 'printer.cfg'
 PRINTER_CONFIG_FILE_BACKUP_EXTENSION = '.bup'
 MATERIAL_CODE_REGEX = r"[A-Z]{3}\d{3}$"
 MATERIAL_CODE_REGEX_EXAMPLE = 'PLA001'  # Leave empty if you don't want to add an example
+# TODO - CHKA: Create class and move variables like this to an initialization phase
+material_directory_relative = os.path.basename(os.path.normpath(MATERIAL_DIRECTORY))
 
 
 def print_error_and_exit(error_message):
@@ -63,16 +65,11 @@ def handle_file_write_error(e):
     sys.exit(-1)
 
 
-# TODO - CHKA: Do not update file if new and existing entry match
-def update_klipper_config_material_entry(new_material_code):
+def get_material_config_entry_line_index(file_contents):
     # Relative to klipper directory
-    material_directory_relative = os.path.basename(os.path.normpath(MATERIAL_DIRECTORY))
     include_directive_regex = r"\[include " + \
                               material_directory_relative + r"\/" + \
                               MATERIAL_CODE_REGEX[:-1] + r".cfg\]"
-
-    klipper_config_file_read_stream = open(PRINTER_CONFIG_FILE, 'r')
-    file_contents = klipper_config_file_read_stream.readlines()
 
     config_entry_line_index = -1
     for line in file_contents:
@@ -80,8 +77,21 @@ def update_klipper_config_material_entry(new_material_code):
         if re.match(include_directive_regex, line):
             print('Old material config file include entry: \n%s\n' % line, flush=True)
             break
+    return config_entry_line_index
 
+
+def read_file_content_as_lines(file_path):
+    klipper_config_file_read_stream = open(file_path, 'r')
+    file_contents = klipper_config_file_read_stream.readlines()
     klipper_config_file_read_stream.close()
+    return file_contents
+
+
+# TODO - CHKA: Do not update file if new and existing entry match
+def update_klipper_config_material_entry(new_material_code):
+    file_contents = read_file_content_as_lines(PRINTER_CONFIG_FILE)
+
+    config_entry_line_index = get_material_config_entry_line_index(file_contents)
 
     if config_entry_line_index == -1:
         print_error_and_exit('Did not find any include directive in klipper config file %s! No changes were made!\n'
