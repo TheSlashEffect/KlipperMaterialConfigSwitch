@@ -8,6 +8,7 @@ import shutil
 MATERIAL_DIRECTORY = '/home/fly/klipper_config/MaterialSpecificConfigs/'
 # Absolute path
 PRINTER_CONFIG_FILE = '/home/fly/klipper_config/printer.cfg'
+PRINTER_CONFIG_FILE_BACKUP_EXTENSION = '.bup'
 MATERIAL_CODE_REGEX = r"[A-Z]{3}\d{3}$"
 MATERIAL_CODE_REGEX_EXAMPLE = 'PLA001'  # Leave empty if you don't want to add an example
 # MATERIAL_CODE_REGEX_EXAMPLE = ''  # Leave empty if you don't want to add an example
@@ -35,7 +36,7 @@ def check_material_config_file_code(new_config_file_path, new_material_code):
 
 
 def backup_klipper_config_file():
-    klipper_config_file_backup = PRINTER_CONFIG_FILE + '.bup'
+    klipper_config_file_backup = PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION
     print('Backing up %s to %s ' % (PRINTER_CONFIG_FILE, klipper_config_file_backup),
           flush=True)
     shutil.copyfile(PRINTER_CONFIG_FILE, klipper_config_file_backup)
