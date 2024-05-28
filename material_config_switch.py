@@ -88,7 +88,7 @@ def read_file_content_as_lines(file_path):
 
 
 def write_updated_content(printer_config_file, file_contents):
-    klipper_config_file_write_stream = open(PRINTER_CONFIG_FILE, 'w')
+    klipper_config_file_write_stream = open(printer_config_file, 'w')
     klipper_config_file_write_stream.writelines(file_contents)
     klipper_config_file_write_stream.close()
 
