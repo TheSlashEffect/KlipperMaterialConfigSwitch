@@ -18,6 +18,7 @@ MATERIAL_CODE_REGEX = r"[A-Z]{3}\d{3}$"
 MATERIAL_CODE_REGEX_EXAMPLE = 'PLA001'  # Leave empty if you don't want to add an example
 # TODO - CHKA: Create class and move variables like this to an initialization phase
 material_directory_relative = os.path.basename(os.path.normpath(MATERIAL_DIRECTORY))
+klipper_config_backup_file_name = PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION
 
 
 def print_error_and_exit(error_message):
@@ -45,10 +46,9 @@ def check_material_config_file_code(new_config_file_path, new_material_code):
 
 
 def backup_klipper_config_file():
-    klipper_config_file_backup = PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION
-    print('Backing up original config file \'%s\' to \'%s\' ' % (PRINTER_CONFIG_FILE, klipper_config_file_backup),
+    print('Backing up original config file \'%s\' to \'%s\' ' % (PRINTER_CONFIG_FILE, klipper_config_backup_file_name),
           flush=True)
-    shutil.copyfile(PRINTER_CONFIG_FILE, klipper_config_file_backup)
+    shutil.copyfile(PRINTER_CONFIG_FILE, klipper_config_backup_file_name)
 
 
 def handle_file_write_error(e):
@@ -56,15 +56,13 @@ def handle_file_write_error(e):
                      % PRINTER_CONFIG_FILE)
     logging.exception(e)
 
-    backup_file_name = PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION
+    if not file_exists(klipper_config_backup_file_name):
+        print_error_and_exit('No backup file %s found! Aborting...' % klipper_config_backup_file_name)
 
-    if not file_exists(backup_file_name):
-        print_error_and_exit('No backup file %s found! Aborting...' % backup_file_name)
-
-    sys.stderr.write('Attempting to recover from file %s\n' % backup_file_name)
+    sys.stderr.write('Attempting to recover from file %s\n' % klipper_config_backup_file_name)
     sys.stderr.flush()
 
-    shutil.copyfile(backup_file_name, PRINTER_CONFIG_FILE)
+    shutil.copyfile(klipper_config_backup_file_name, PRINTER_CONFIG_FILE)
     sys.exit(-1)
 
 
