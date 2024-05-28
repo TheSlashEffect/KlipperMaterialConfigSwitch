@@ -37,6 +37,10 @@ def check_material_config_file_code(new_config_file_path, new_material_code):
 
 def backup_klipper_config_file():
     klipper_config_file_backup = PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION
+    if not file_exists(PRINTER_CONFIG_FILE):
+        sys.stderr.write('Printer config file %s does not exist!' % PRINTER_CONFIG_FILE)
+        sys.stderr.flush()
+        sys.exit(-1)
     print('Backing up %s to %s ' % (PRINTER_CONFIG_FILE, klipper_config_file_backup),
           flush=True)
     shutil.copyfile(PRINTER_CONFIG_FILE, klipper_config_file_backup)
