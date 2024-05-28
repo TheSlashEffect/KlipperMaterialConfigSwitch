@@ -49,7 +49,7 @@ def backup_klipper_config_file():
     print('Backing up original config file \'%s\' to \'%s\'... ' % (PRINTER_CONFIG_FILE, klipper_config_backup_file_name),
           flush=True, end='')
     shutil.copyfile(PRINTER_CONFIG_FILE, klipper_config_backup_file_name)
-    print('completed')
+    print('completed', flush=True)
 
 
 def handle_file_write_error(e):
