@@ -41,8 +41,6 @@ def check_material_config_file_code(new_config_file_path, new_material_code):
 
 def backup_klipper_config_file():
     klipper_config_file_backup = PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION
-    if not file_exists(PRINTER_CONFIG_FILE):
-        print_error_and_exit('Printer config file %s does not exist!' % PRINTER_CONFIG_FILE)
     print('Backing up %s to %s ' % (PRINTER_CONFIG_FILE, klipper_config_file_backup),
           flush=True)
     shutil.copyfile(PRINTER_CONFIG_FILE, klipper_config_file_backup)
@@ -100,8 +98,10 @@ def update_klipper_config_material_entry(new_material_code):
 
 
 def update_config_file(new_material_code):
-    new_config_file_location = MATERIAL_DIRECTORY + new_material_code + '.cfg'
+    if not file_exists(PRINTER_CONFIG_FILE):
+        print_error_and_exit(print_error_and_exit('Printer config file %s does not exist!' % PRINTER_CONFIG_FILE))
 
+    new_config_file_location = MATERIAL_DIRECTORY + new_material_code + '.cfg'
     if not file_exists(new_config_file_location):
         print_error_and_exit('Material configuration file %s does not exist!\n' % new_config_file_location)
 
