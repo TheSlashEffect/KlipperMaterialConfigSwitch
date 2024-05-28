@@ -35,7 +35,10 @@ def check_material_config_file_code(new_config_file_path, new_material_code):
 
 
 def backup_klipper_config_file():
-    shutil.copyfile(PRINTER_CONFIG_FILE, PRINTER_CONFIG_FILE + '.bup')
+    klipper_config_file_backup = PRINTER_CONFIG_FILE + '.bup'
+    print('Backing up %s to %s ' % (PRINTER_CONFIG_FILE, klipper_config_file_backup),
+          flush=True)
+    shutil.copyfile(PRINTER_CONFIG_FILE, klipper_config_file_backup)
 
 
 def update_klipper_config_material_entry(new_material_code):
@@ -57,8 +60,9 @@ def update_klipper_config_material_entry(new_material_code):
                 f.write(line)
 
     if not success:
-        sys.stderr.write('Did not find any include directive in file %s! No changes were made\n'
+        sys.stderr.write('Did not find any include directive in file %s! No changes were made!\n'
                          % PRINTER_CONFIG_FILE)
+        sys.stderr.flush()
         sys.exit(-1)
 
 
