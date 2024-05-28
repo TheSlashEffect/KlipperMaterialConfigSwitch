@@ -16,6 +16,12 @@ MATERIAL_CODE_REGEX = r"[A-Z]{3}\d{3}$"
 MATERIAL_CODE_REGEX_EXAMPLE = 'PLA001'  # Leave empty if you don't want to add an example
 
 
+def print_error_and_exit(error_message):
+    sys.stderr.write(error_message)
+    sys.stderr.flush()
+    sys.exit(-1)
+
+
 def file_exists(new_config_file_location):
     return os.path.exists(new_config_file_location)
 
@@ -24,23 +30,19 @@ def check_material_config_file_code(new_config_file_path, new_material_code):
     with open(new_config_file_path) as f:
         new_config_material_code = f.readline().strip()[1:]
         if not re.match(MATERIAL_CODE_REGEX, new_config_material_code):
-            sys.stderr.write(
+            print_error_and_exit(
                 "Provided file does not start with a valid material code: %s" % new_config_material_code)
-            sys.exit(-1)
 
     if new_config_material_code != new_material_code:
-        sys.stderr.write('File %s\'s material code %s does not match file name %s' % (new_config_file_path,
-                                                                                      new_config_material_code,
-                                                                                      new_material_code))
-        sys.exit(-1)
+        print_error_and_exit('File %s\'s material code %s does not match file name %s' % (new_config_file_path,
+                                                                                          new_config_material_code,
+                                                                                          new_material_code))
 
 
 def backup_klipper_config_file():
     klipper_config_file_backup = PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION
     if not file_exists(PRINTER_CONFIG_FILE):
-        sys.stderr.write('Printer config file %s does not exist!' % PRINTER_CONFIG_FILE)
-        sys.stderr.flush()
-        sys.exit(-1)
+        print_error_and_exit('Printer config file %s does not exist!' % PRINTER_CONFIG_FILE)
     print('Backing up %s to %s ' % (PRINTER_CONFIG_FILE, klipper_config_file_backup),
           flush=True)
     shutil.copyfile(PRINTER_CONFIG_FILE, klipper_config_file_backup)
@@ -77,10 +79,8 @@ def update_klipper_config_material_entry(new_material_code):
     klipper_config_file_read_stream.close()
 
     if config_entry_line_index == -1:
-        sys.stderr.write('Did not find any include directive in klipper config file %s! No changes were made!\n'
-                         % PRINTER_CONFIG_FILE)
-        sys.stderr.flush()
-        sys.exit(-1)
+        print_error_and_exit('Did not find any include directive in klipper config file %s! No changes were made!\n'
+                             % PRINTER_CONFIG_FILE)
 
     file_contents[config_entry_line_index] = '[include %s/%s.cfg]\n' % (material_directory_relative, new_material_code)
 
@@ -96,8 +96,7 @@ def update_config_file(new_material_code):
     new_config_file_location = MATERIAL_DIRECTORY + new_material_code + '.cfg'
 
     if not file_exists(new_config_file_location):
-        sys.stderr.write('Material configuration file %s does not exist!\n' % new_config_file_location)
-        sys.exit(-1)
+        print_error_and_exit('Material configuration file %s does not exist!\n' % new_config_file_location)
 
     check_material_config_file_code(new_config_file_location, new_material_code)
 
