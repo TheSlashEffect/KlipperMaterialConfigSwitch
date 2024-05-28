@@ -7,7 +7,7 @@ import logging
 
 # You can use these entries to run this script locally using the GitHub provided folder structure
 PRINTER_CONFIG_FILE = 'printer.cfg'
-MATERIAL_DIRECTORY = 'MaterialSpecificConfigs/'
+MATERIAL_DIRECTORY = 'MaterialSpecificConfigs'
 
 # Absolute path, must be under your klipper config directory
 # MATERIAL_DIRECTORY = '/home/fly/klipper_config/MaterialSpecificConfigs/'
@@ -46,18 +46,19 @@ def check_material_config_file_code(new_config_file_path, new_material_code):
 
 
 def backup_klipper_config_file():
-    print('Backing up original config file \'%s\' to \'%s\' ' % (PRINTER_CONFIG_FILE, klipper_config_backup_file_name),
-          flush=True)
+    print('Backing up original config file \'%s\' to \'%s\'... ' % (PRINTER_CONFIG_FILE, klipper_config_backup_file_name),
+          flush=True, end='')
     shutil.copyfile(PRINTER_CONFIG_FILE, klipper_config_backup_file_name)
+    print('completed')
 
 
 def handle_file_write_error(e):
-    sys.stderr.write('Writing to klipper config file %s failed!'
+    sys.stderr.write('Error! Writing to klipper config file %s failed!'
                      % PRINTER_CONFIG_FILE)
     logging.exception(e)
 
     if not file_exists(klipper_config_backup_file_name):
-        print_error_and_exit('No backup file %s found! Aborting...' % klipper_config_backup_file_name)
+        print_error_and_exit('No backup file %s found! Check backup file extension. Aborting...' % klipper_config_backup_file_name)
 
     sys.stderr.write('Attempting to recover from file %s\n' % klipper_config_backup_file_name)
     sys.stderr.flush()
