@@ -43,7 +43,7 @@ def check_material_config_file_code(new_config_file_path, new_material_code):
 
 def backup_klipper_config_file():
     klipper_config_file_backup = PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION
-    print('Backing up %s to %s ' % (PRINTER_CONFIG_FILE, klipper_config_file_backup),
+    print('Backing up original config file \'%s\' to \'%s\' ' % (PRINTER_CONFIG_FILE, klipper_config_file_backup),
           flush=True)
     shutil.copyfile(PRINTER_CONFIG_FILE, klipper_config_file_backup)
 
