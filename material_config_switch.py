@@ -163,9 +163,9 @@ if __name__ == '__main__':
     1. Confirm that the user input material code complies with the regex format
     2. Check that a config file with the desired code exists
     3. Confirm that the file we're reading starts with a regex compliant material code
-    4. Create backup of printer.cfg before modifying it (printer.cfg.bup)
+    4. Create backup of printer.cfg before modifying it (ie. printer.cfg{PRINTER_CONFIG_FILE_BACKUP_EXTENSION})
     5. Update printer.cfg
     6. Restart klipper (firmware restart)
     
-    Bonus: Create index file for codes. If user did not provide input code, print it out
+    TODO - CHKA: Create index file for codes. If user did not provide input code, print the file's contents
     '''
