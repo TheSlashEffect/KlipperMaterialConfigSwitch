@@ -19,13 +19,8 @@ def check_material_config_file_existence(new_config_file_location):
         sys.exit(-1)
 
 
-def change_config_file(new_material_code):
-    new_config_file_location = MATERIAL_DIRECTORY + new_material_code + '.cfg'
-
-    check_material_config_file_existence(new_config_file_location)
-
-    # Step 3: Check if file starts with a valid material code
-    with open(new_config_file_location) as f:
+def check_material_config_file_code(new_config_file_path, new_material_code):
+    with open(new_config_file_path) as f:
         new_config_material_code = f.readline().strip()[1:]
         if not re.match(MATERIAL_CODE_REGEX, new_config_material_code):
             sys.stderr.write(
@@ -33,21 +28,21 @@ def change_config_file(new_material_code):
             sys.exit(-1)
 
     if new_config_material_code != new_material_code:
-        sys.stderr.write('File %s\'s material code %s does not match file name %s' % (new_config_file_location,
+        sys.stderr.write('File %s\'s material code %s does not match file name %s' % (new_config_file_path,
                                                                                       new_config_material_code,
                                                                                       new_material_code))
         sys.exit(-1)
 
-    print("Switching to material %s - Config file: %s" % (new_config_material_code, new_config_file_location),
-          flush=True)
 
-    # Step 4: Create backup of original configuration
+def backup_klipper_config_file():
     shutil.copyfile(PRINTER_CONFIG_FILE, PRINTER_CONFIG_FILE + '.bup')
 
-    # Relative to klipper
+
+def update_klipper_config_material_entry(new_material_code):
+    # Relative to klipper directory
     material_directory_relative = os.path.basename(os.path.normpath(MATERIAL_DIRECTORY))
     success = False
-    # Step 5: Modify printer.cfg
+
     with open(PRINTER_CONFIG_FILE, 'r+') as f:
         include_directive_regex = r"\[include " + \
                                   material_directory_relative + r"\/" + \
@@ -65,6 +60,22 @@ def change_config_file(new_material_code):
         sys.stderr.write('Did not find any include directive in file %s! No changes were made\n'
                          % PRINTER_CONFIG_FILE)
         sys.exit(-1)
+
+
+def change_config_file(new_material_code):
+    new_config_file_location = MATERIAL_DIRECTORY + new_material_code + '.cfg'
+
+    check_material_config_file_existence(new_config_file_location)
+
+    check_material_config_file_code(new_config_file_location, new_material_code)
+
+    print("Switching to material: ", new_material_code)
+    print("      New config file: ", new_config_file_location)
+    print(flush=True)
+
+    backup_klipper_config_file()
+
+    update_klipper_config_material_entry(new_material_code)
 
 
 def print_material_code_regex():
