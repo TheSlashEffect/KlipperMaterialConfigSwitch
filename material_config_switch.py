@@ -3,11 +3,14 @@ import re
 import sys
 
 import shutil
+import logging
 
 # Absolute path, must be under your klipper config directory
-MATERIAL_DIRECTORY = '/home/fly/klipper_config/MaterialSpecificConfigs/'
+MATERIAL_DIRECTORY = 'MaterialSpecificConfigs/'
+# MATERIAL_DIRECTORY = '/home/fly/klipper_config/MaterialSpecificConfigs/'
 # Absolute path
-PRINTER_CONFIG_FILE = '/home/fly/klipper_config/printer.cfg'
+# PRINTER_CONFIG_FILE = '/home/fly/klipper_config/printer.cfg'
+PRINTER_CONFIG_FILE = 'printer.cfg'
 PRINTER_CONFIG_FILE_BACKUP_EXTENSION = '.bup'
 MATERIAL_CODE_REGEX = r"[A-Z]{3}\d{3}$"
 MATERIAL_CODE_REGEX_EXAMPLE = 'PLA001'  # Leave empty if you don't want to add an example
@@ -41,27 +44,45 @@ def backup_klipper_config_file():
     shutil.copyfile(PRINTER_CONFIG_FILE, klipper_config_file_backup)
 
 
+# TODO - CHKA: Do not update file if new and existing entry match
 def update_klipper_config_material_entry(new_material_code):
     # Relative to klipper directory
     material_directory_relative = os.path.basename(os.path.normpath(MATERIAL_DIRECTORY))
-    success = False
+    include_directive_regex = r"\[include " + \
+                              material_directory_relative + r"\/" + \
+                              MATERIAL_CODE_REGEX[:-1] + r".cfg\]"
 
-    with open(PRINTER_CONFIG_FILE, 'r+') as f:
-        include_directive_regex = r"\[include " + \
-                                  material_directory_relative + r"\/" + \
-                                  MATERIAL_CODE_REGEX[:-1] + r".cfg\]"
-        old = f.readlines()
-        f.seek(0)
-        for line in old:
-            if re.match(include_directive_regex, line):
-                success = True
-                f.write('[include %s/%s.cfg]\n' % (material_directory_relative, new_material_code))
-            else:
-                f.write(line)
+    klipper_config_file_read_stream = open(PRINTER_CONFIG_FILE, 'r')
+    file_contents = klipper_config_file_read_stream.readlines()
 
-    if not success:
-        sys.stderr.write('Did not find any include directive in file %s! No changes were made!\n'
+    config_entry_line_index = -1
+    for line in file_contents:
+        config_entry_line_index += 1
+        if re.match(include_directive_regex, line):
+            print('Old material config file include entry: \n%s\n' % line, flush=True)
+            break
+
+    klipper_config_file_read_stream.close()
+
+    if config_entry_line_index == -1:
+        sys.stderr.write('Did not find any include directive in klipper config file %s! No changes were made!\n'
                          % PRINTER_CONFIG_FILE)
+        sys.stderr.flush()
+        sys.exit(-1)
+
+    file_contents[config_entry_line_index] = '[include %s/%s.cfg]\n' % (material_directory_relative, new_material_code)
+
+    try:
+        klipper_config_file_write_stream = open(PRINTER_CONFIG_FILE, 'w')
+        klipper_config_file_write_stream.writelines(file_contents)
+        klipper_config_file_write_stream.close()
+    except Exception as e:
+        # handle_file_write_error(e) TODO - CHKA: extract function for error handling
+        sys.stderr.write('Writing to klipper config file %s failed!'
+                         % PRINTER_CONFIG_FILE)
+        logging.exception(e)
+        sys.stderr.write('Attempting to recover from file %s\n' %
+                         PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION)
         sys.stderr.flush()
         sys.exit(-1)
 
