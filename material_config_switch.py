@@ -118,9 +118,6 @@ def update_config_file(new_material_code):
 
     update_klipper_config_material_entry(new_material_code)
 
-    # Restart klipper
-    os.system("echo FIRMWARE_RESTART > %s" % common.PRINTER_PIPE_FILE)
-
 
 if __name__ == '__main__':
     input_code = get_user_input_code(sys.argv)
