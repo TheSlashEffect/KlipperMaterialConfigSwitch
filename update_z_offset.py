@@ -57,7 +57,7 @@ def issue_gcode_command(z_offset_diff):
 
 
 def update_z_offset():
-    input_code = 'PLA001'
+    input_code = common.get_user_input_code()
     new_config_file_location = os.path.join(common.MATERIAL_DIRECTORY, input_code + '.cfg')
     z_offset_diff = clear_and_get_new_config_file_z_offset(new_config_file_location)
     if z_offset_diff == '':
