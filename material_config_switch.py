@@ -163,9 +163,12 @@ def update_config_file(new_material_code):
 
     backup_klipper_config_file()
 
-    update_z_offset(new_config_file_location)
-
     update_klipper_config_material_entry(new_material_code)
+
+    # Restart klipper
+    os.system("echo FIRMWARE_RESTART > %s" % PRINTER_PIPE_FILE)
+
+    update_z_offset(new_config_file_location)
 
 
 def print_material_code_regex():
@@ -196,9 +199,6 @@ if __name__ == '__main__':
     input_code = get_user_input_code(sys.argv)
 
     update_config_file(input_code)
-
-    # Restart klipper
-    os.system("echo FIRMWARE_RESTART > %s" % PRINTER_PIPE_FILE)
 
     '''
     Steps:
