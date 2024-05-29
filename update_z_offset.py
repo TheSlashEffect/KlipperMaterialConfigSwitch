@@ -51,7 +51,7 @@ def clear_and_get_new_config_file_z_offset(new_config_file_location):
 
 
 def issue_gcode_command(z_offset_diff):
-    gcode_command = 'SET_GCODE_OFFSET Z_ADJUST=%s' % z_offset_diff
+    gcode_command = 'SAVE_VARIABLE VARIABLE=z_offset VALUE=' + z_offset_diff
     os.system("echo %s > %s" % (gcode_command, common.PRINTER_PIPE_FILE))
     print('Issuing gcode_command: ', gcode_command)
 
