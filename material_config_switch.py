@@ -46,7 +46,8 @@ def check_material_config_file_code(new_config_file_path, new_material_code):
 
 
 def backup_klipper_config_file():
-    print('Backing up original config file \'%s\' to \'%s\'... ' % (PRINTER_CONFIG_FILE, klipper_config_backup_file_name),
+    print('Backing up original config file \'%s\' to \'%s\'... ' %
+          (PRINTER_CONFIG_FILE, klipper_config_backup_file_name),
           flush=True, end='')
     shutil.copyfile(PRINTER_CONFIG_FILE, klipper_config_backup_file_name)
     print('completed', flush=True)
@@ -58,7 +59,8 @@ def handle_file_write_error(e):
     logging.exception(e)
 
     if not file_exists(klipper_config_backup_file_name):
-        print_error_and_exit('No backup file %s found! Check backup file extension. Aborting...' % klipper_config_backup_file_name)
+        print_error_and_exit('No backup file %s found! Check backup file extension. Aborting...' %
+                             klipper_config_backup_file_name)
 
     sys.stderr.write('Attempting to recover from file %s\n' % klipper_config_backup_file_name)
     sys.stderr.flush()
