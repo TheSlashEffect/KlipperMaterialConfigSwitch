@@ -104,15 +104,11 @@ def update_file_content(printer_config_file, new_file_contents):
 # TODO - CHKA: Do not update file if new and existing entry match
 def update_klipper_config_material_entry(new_material_code):
     file_contents = read_file_content_as_lines(PRINTER_CONFIG_FILE)
-
     config_entry_line_index = get_material_config_entry_line_index(file_contents)
-
     if config_entry_line_index == -1:
         print_error_and_exit('Did not find any include directive in klipper config file %s! No changes were made!\n'
                              % PRINTER_CONFIG_FILE)
-
     file_contents[config_entry_line_index] = '[include %s/%s.cfg]\n' % (material_directory_relative, new_material_code)
-
     update_file_content(PRINTER_CONFIG_FILE, file_contents)
 
 
