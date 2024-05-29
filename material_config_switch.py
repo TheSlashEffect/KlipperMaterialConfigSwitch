@@ -16,6 +16,7 @@ MATERIAL_DIRECTORY = 'MaterialSpecificConfigs'
 PRINTER_CONFIG_FILE_BACKUP_EXTENSION = '.bup'
 MATERIAL_CODE_REGEX = r"[A-Z]{3}\d{3}$"
 MATERIAL_CODE_REGEX_EXAMPLE = 'PLA001'  # Leave empty if you don't want to add an example
+PRINTER_PIPE_FILE = '/tmp/printer'
 # TODO - CHKA: Create class and move variables like this to an initialization phase
 material_directory_relative = os.path.basename(os.path.normpath(MATERIAL_DIRECTORY))
 klipper_config_backup_file_name = PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION
@@ -91,10 +92,10 @@ def read_file_content_as_lines(file_path):
     return file_contents
 
 
-def write_updated_content(printer_config_file, file_contents):
+def update_file_content(printer_config_file, new_file_contents):
     try:
         klipper_config_file_write_stream = open(printer_config_file, 'w')
-        klipper_config_file_write_stream.writelines(file_contents)
+        klipper_config_file_write_stream.writelines(new_file_contents)
         klipper_config_file_write_stream.close()
     except Exception as e:
         handle_file_write_error(e)
@@ -112,7 +113,42 @@ def update_klipper_config_material_entry(new_material_code):
 
     file_contents[config_entry_line_index] = '[include %s/%s.cfg]\n' % (material_directory_relative, new_material_code)
 
-    write_updated_content(PRINTER_CONFIG_FILE, file_contents)
+    update_file_content(PRINTER_CONFIG_FILE, file_contents)
+
+
+def clear_and_get_new_config_file_z_offset(new_config_file_location):
+    file_contents = read_file_content_as_lines(new_config_file_location)
+    z_endstop_entry_regex = r"([#])\s?(position_endstop_diff\s?=\s?([-]?\d*\.?\d+$))"
+    z_endstop_entry_value = ''
+    found_z_offset_entry = False
+    compiled_regex = re.compile(z_endstop_entry_regex)
+
+    offset_entry_line_index = -1
+    for line in file_contents:
+        offset_entry_line_index += 1
+        regex_match = compiled_regex.match(line)
+        if regex_match is not None:
+            found_z_offset_entry = True
+            z_endstop_entry_string = regex_match.groups()[1]
+            z_endstop_entry_value = regex_match.groups()[2]
+            # Invalid key for klipper, needs to be commented out
+            file_contents[offset_entry_line_index] = '# ' + z_endstop_entry_string
+            break
+
+    if not found_z_offset_entry:
+        return ''
+    else:
+        update_file_content(new_config_file_location, file_contents)
+        return z_endstop_entry_value
+
+
+def update_z_offset(new_config_file_location):
+    z_offset_diff = clear_and_get_new_config_file_z_offset(new_config_file_location)
+    if z_offset_diff == '':
+        return
+    gcode_command = 'SET_GCODE_OFFSET Z_ADJUST=%s' % z_offset_diff
+    os.system("echo %s > %s" % (gcode_command, PRINTER_PIPE_FILE))
+    print('Issuing gcode_command: ', gcode_command)
 
 
 def update_config_file(new_material_code):
@@ -130,6 +166,8 @@ def update_config_file(new_material_code):
     print(flush=True)
 
     backup_klipper_config_file()
+
+    update_z_offset(new_config_file_location)
 
     update_klipper_config_material_entry(new_material_code)
 
@@ -164,7 +202,7 @@ if __name__ == '__main__':
     update_config_file(input_code)
 
     # Restart klipper
-    os.system("echo FIRMWARE_RESTART > /tmp/printer")
+    os.system("echo FIRMWARE_RESTART > %s" % PRINTER_PIPE_FILE)
 
     '''
     Steps:
