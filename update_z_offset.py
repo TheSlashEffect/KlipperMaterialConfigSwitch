@@ -39,7 +39,7 @@ def clear_and_get_new_config_file_z_offset(new_config_file_location):
             z_endstop_entry_string = regex_match.groups()[1]
             z_endstop_entry_value = regex_match.groups()[2]
             # Invalid key for klipper, needs to be commented out
-            file_contents[offset_entry_line_index] = '# ' + z_endstop_entry_string
+            file_contents[offset_entry_line_index] = '# ' + z_endstop_entry_string + '\n'
             print('Found endstop diff = ', z_endstop_entry_value)
             break
 
