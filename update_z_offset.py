@@ -50,7 +50,7 @@ def clear_and_get_new_config_file_z_offset(new_config_file_location):
         return z_endstop_entry_value
 
 
-def issue_gcode_command(z_offset_diff):
+def issue_z_offset_store_command(z_offset_diff):
     gcode_command = 'SAVE_VARIABLE VARIABLE=z_offset VALUE=' + z_offset_diff
     os.system("echo %s > %s" % (gcode_command, common.PRINTER_PIPE_FILE))
     print('Issuing gcode_command: ', gcode_command)
@@ -62,7 +62,7 @@ def update_z_offset(argv):
     z_offset_diff = clear_and_get_new_config_file_z_offset(new_config_file_location)
     if z_offset_diff == '':
         return
-    issue_gcode_command(z_offset_diff)
+    issue_z_offset_store_command(z_offset_diff)
 
 
 if __name__ == '__main__':
