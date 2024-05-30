@@ -5,7 +5,7 @@ import sys
 import common
 
 
-class ZUpdater:
+class VerticalOffsetUpdateUseCase:
 
     def __init__(self, new_config: common.Config):
         self.config = new_config
@@ -54,5 +54,5 @@ class ZUpdater:
 
 if __name__ == '__main__':
     config = common.Config()
-    z_offset_updater = ZUpdater(config)
-    z_offset_updater.update_z_offset(sys.argv)
+    vertical_offset_update_use_case = VerticalOffsetUpdateUseCase(config)
+    vertical_offset_update_use_case.update_z_offset(sys.argv)
