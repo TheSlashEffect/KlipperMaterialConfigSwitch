@@ -86,25 +86,25 @@ def read_file_content_as_lines(file_path: str) -> List[str]:
     return file_contents
 
 
-def print_material_code_regex(config: Config) -> None:
-    sys.stderr.write('Configured material code regex is of form %s\n' % config.material_code_regex)
-    if config.material_code_regex_example != '':
-        sys.stderr.write('Example: %s\n' % config.material_code_regex_example)
+def print_material_code_regex() -> None:
+    sys.stderr.write('Configured material code regex is of form %s\n' % scriptConfig.MATERIAL_CODE_REGEX)
+    if scriptConfig.MATERIAL_CODE_REGEX_EXAMPLE != '':
+        sys.stderr.write('Example: %s\n' % scriptConfig.MATERIAL_CODE_REGEX_EXAMPLE)
     sys.stderr.flush()
 
 
-def get_user_input_code(config: Config, arguments: List[str]) -> str:
+def get_user_input_code(arguments: List[str]) -> str:
     if len(arguments) < 2:
         print('Usage: %s <material code>' % arguments[0])
-        print_material_code_regex(config)
+        print_material_code_regex()
         sys.exit(-1)
 
     user_input_code = sys.argv[1]
 
     # Step 1
-    if not re.match(config.material_code_regex, user_input_code):
+    if not re.match(scriptConfig.MATERIAL_CODE_REGEX, user_input_code):
         sys.stderr.write('Input code error \'%s\'! Please provide a valid material code\n' % user_input_code)
-        print_material_code_regex(config)
+        print_material_code_regex()
         sys.exit(-1)
 
     return user_input_code

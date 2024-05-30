@@ -71,13 +71,13 @@ class UpdateConfigUseCase:
 
 
 if __name__ == '__main__':
-    config = common.Config()
-    input_code = common.get_user_input_code(config, sys.argv)
+    hardware_code = common.get_user_input_code(sys.argv)
+    config = common.Config(hardware_code)
     config_updater = UpdateConfigUseCase(config)
-    config_updater.update_config_file(input_code)
+    config_updater.update_config_file(hardware_code)
 
     z_offset_update_use_case = update_z_offset_use_case.VerticalOffsetUpdateUseCase(config)
-    z_offset_update_use_case.update_z_offset(input_code)
+    z_offset_update_use_case.update_z_offset(hardware_code)
 
     '''
     Steps:
