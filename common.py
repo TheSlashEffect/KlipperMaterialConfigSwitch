@@ -21,17 +21,20 @@ class Config:
         self.material_code_regex_example = scriptConfig.MATERIAL_CODE_REGEX_EXAMPLE
         self.printer_pipe_file = scriptConfig.PRINTER_PIPE_FILE
 
-    def __init__(self):
-        self.printer_pipe_file = None
-        self.material_code_regex_example = None
-        self.material_code_regex = None
-        self.printer_config_file_backup_extension = None
-        self.material_directory = None
-        self.printer_config_file = None
+    def __init__(self, hardware_code: str):
+        self.printer_pipe_file = ''
+        self.material_code_regex_example = ''
+        self.material_code_regex = ''
+        self.printer_config_file_backup_extension = ''
+        self.material_directory = ''
+        self.printer_config_file = ''
+
         self.initialize_from_config_file()
         self.material_directory_relative = os.path.basename(os.path.normpath(scriptConfig.MATERIAL_DIRECTORY))
         self.klipper_config_backup_file_name = (scriptConfig.PRINTER_CONFIG_FILE +
                                                 scriptConfig.PRINTER_CONFIG_FILE_BACKUP_EXTENSION)
+        self.hardware_code = hardware_code
+        self.hardware_specific_config_file = str(os.path.join(self.material_directory, hardware_code + '.cfg'))
 
 
 def print_error_and_exit(error_message: str) -> None:

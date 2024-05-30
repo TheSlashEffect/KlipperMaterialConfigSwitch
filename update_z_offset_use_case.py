@@ -10,8 +10,8 @@ class VerticalOffsetUpdateUseCase:
     def __init__(self, new_config: common.Config):
         self.config = new_config
 
-    def clear_and_get_new_config_file_z_offset(self, new_config_file_location):
-        file_contents = common.read_file_content_as_lines(new_config_file_location)
+    def clear_and_get_new_config_file_z_offset(self):
+        file_contents = common.read_file_content_as_lines(self.config.hardware_specific_config_file)
         z_endstop_entry_regex = r"([#])\s?(position_endstop_diff\s?=\s?([-]?\d*\.?\d+$))"
         z_endstop_entry_value = ''
         found_z_offset_entry = False
@@ -33,7 +33,7 @@ class VerticalOffsetUpdateUseCase:
         if not found_z_offset_entry:
             return ''
         else:
-            common.update_file_content(new_config_file_location, file_contents)
+            common.update_file_content(self.config.hardware_specific_config_file, file_contents)
             return z_endstop_entry_value
 
     def issue_z_offset_store_command(self, z_offset_diff):
@@ -41,16 +41,15 @@ class VerticalOffsetUpdateUseCase:
         os.system("echo %s > %s" % (gcode_command, self.config.printer_pipe_file))
         print('Issuing gcode_command to store z offset to gcode variable: ', gcode_command)
 
-    def update_z_offset(self, material_code: str):
-        new_config_file_location = os.path.join(self.config.material_directory, material_code + '.cfg')
-        z_offset_diff = self.clear_and_get_new_config_file_z_offset(new_config_file_location)
+    def update_z_offset(self):
+        z_offset_diff = self.clear_and_get_new_config_file_z_offset()
         if z_offset_diff == '':
             return
         self.issue_z_offset_store_command(z_offset_diff)
 
 
 if __name__ == '__main__':
-    config = common.Config()
-    input_code = common.get_user_input_code(config, sys.argv)
+    hardware_code = common.get_user_input_code(sys.argv)
+    config = common.Config(hardware_code)
     vertical_offset_update_use_case = VerticalOffsetUpdateUseCase(config)
-    vertical_offset_update_use_case.update_z_offset(input_code)
+    vertical_offset_update_use_case.update_z_offset()
