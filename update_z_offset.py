@@ -41,7 +41,7 @@ class VerticalOffsetUpdateUseCase:
     def issue_z_offset_store_command(z_offset_diff):
         gcode_command = 'SAVE_VARIABLE VARIABLE=z_offset VALUE=' + z_offset_diff
         os.system("echo %s > %s" % (gcode_command, config.printer_pipe_file))
-        print('Issuing gcode_command: ', gcode_command)
+        print('Issuing gcode_command to store z offset to gcode variable: ', gcode_command)
 
     def update_z_offset(self, argv):
         input_code = common.get_user_input_code(config, argv)
