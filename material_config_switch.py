@@ -55,8 +55,7 @@ class UpdateConfigUseCase:
 
     def update_config_file(self, new_material_code):
         if not common.file_exists(config.printer_config_file):
-            common.print_error_and_exit(
-                common.print_error_and_exit('Printer config file %s does not exist!' % config.printer_config_file))
+            common.print_error_and_exit('Printer config file %s does not exist!' % config.printer_config_file)
 
         new_config_file_location = os.path.join(config.material_directory, new_material_code + '.cfg')
         if not common.file_exists(new_config_file_location):
