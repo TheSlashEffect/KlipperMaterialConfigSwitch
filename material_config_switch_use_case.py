@@ -80,11 +80,12 @@ if __name__ == '__main__':
     '''
     Steps:
     1. Confirm that the user input material code complies with the regex format
-    2. Check that a config file with the desired code exists
-    3. Confirm that the file we're reading starts with a regex compliant material code
+    2. Check that a config file with the desired hardware code exists
+    3. Confirm that said file starts with a regex compliant material code
     4. Create backup of printer.cfg before modifying it (ie. printer.cfg{PRINTER_CONFIG_FILE_BACKUP_EXTENSION})
-    5. Update printer.cfg
-    6. Restart klipper (firmware restart)
+    5. Update printer.cfg with new hardware config include directive
+    6. Store z offset to printer's disk variables using SAVE_VARIABLE
+    7. Restart klipper (firmware restart)
     
     TODO - CHKA: Create index file for codes. If user did not provide input code, print the file's contents
     '''
