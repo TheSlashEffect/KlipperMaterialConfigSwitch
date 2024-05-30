@@ -7,7 +7,7 @@ import shutil
 import common
 
 
-class ImportUpdater:
+class UpdateConfigUseCase:
 
     def __init__(self, new_config: common.Config):
         self.config = new_config
@@ -85,9 +85,9 @@ class ImportUpdater:
 if __name__ == '__main__':
     config = common.Config()
     input_code = common.get_user_input_code(config, sys.argv)
-    import_updater = ImportUpdater(config)
+    config_updater = UpdateConfigUseCase(config)
 
-    import_updater.update_config_file(input_code)
+    config_updater.update_config_file(input_code)
 
     '''
     Steps:
