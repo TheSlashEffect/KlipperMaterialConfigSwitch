@@ -2,6 +2,9 @@ import os
 import re
 import sys
 
+import shutil
+import logging
+
 # You can use these entries to run this script locally using the GitHub provided folder structure
 PRINTER_CONFIG_FILE = 'printer.cfg'
 MATERIAL_DIRECTORY = 'MaterialSpecificConfigs'
@@ -17,6 +20,50 @@ PRINTER_PIPE_FILE = '/tmp/printer'
 # TODO - CHKA: Create class and move variables like this to an initialization phase
 material_directory_relative = os.path.basename(os.path.normpath(MATERIAL_DIRECTORY))
 klipper_config_backup_file_name = PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION
+
+
+def print_error_and_exit(error_message):
+    sys.stderr.write(error_message)
+    # Flushing because the G-Code Shell Command Extension context we're running under handles output differently
+    sys.stderr.flush()
+    sys.exit(-1)
+
+
+def file_exists(new_config_file_location):
+    return os.path.exists(new_config_file_location)
+
+
+def handle_file_write_error(e):
+    sys.stderr.write('Error! Writing to klipper config file %s failed!'
+                     % PRINTER_CONFIG_FILE)
+    logging.exception(e)
+
+    if not file_exists(klipper_config_backup_file_name):
+        print_error_and_exit('No backup file %s found! Check backup file extension. Aborting...' %
+                             klipper_config_backup_file_name)
+
+    sys.stderr.write('Attempting to recover from file %s\n' % klipper_config_backup_file_name)
+    sys.stderr.flush()
+
+    shutil.copyfile(klipper_config_backup_file_name, PRINTER_CONFIG_FILE)
+    sys.exit(-1)
+
+
+def update_file_content(printer_config_file, new_file_contents):
+    try:
+        klipper_config_file_write_stream = open(printer_config_file, 'w')
+        klipper_config_file_write_stream.writelines(new_file_contents)
+        klipper_config_file_write_stream.close()
+    except Exception as e:
+        logging.warning(e)
+        sys.exit(1)
+
+
+def read_file_content_as_lines(file_path):
+    klipper_config_file_read_stream = open(file_path, 'r')
+    file_contents = klipper_config_file_read_stream.readlines()
+    klipper_config_file_read_stream.close()
+    return file_contents
 
 
 def print_material_code_regex():

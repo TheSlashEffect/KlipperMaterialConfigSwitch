@@ -6,25 +6,8 @@ import logging
 import common
 
 
-def read_file_content_as_lines(file_path):
-    klipper_config_file_read_stream = open(file_path, 'r')
-    file_contents = klipper_config_file_read_stream.readlines()
-    klipper_config_file_read_stream.close()
-    return file_contents
-
-
-def update_file_content(printer_config_file, new_file_contents):
-    try:
-        klipper_config_file_write_stream = open(printer_config_file, 'w')
-        klipper_config_file_write_stream.writelines(new_file_contents)
-        klipper_config_file_write_stream.close()
-    except Exception as e:
-        logging.warning(e)
-        sys.exit(1)
-
-
 def clear_and_get_new_config_file_z_offset(new_config_file_location):
-    file_contents = read_file_content_as_lines(new_config_file_location)
+    file_contents = common.read_file_content_as_lines(new_config_file_location)
     z_endstop_entry_regex = r"([#])\s?(position_endstop_diff\s?=\s?([-]?\d*\.?\d+$))"
     z_endstop_entry_value = ''
     found_z_offset_entry = False
@@ -46,7 +29,7 @@ def clear_and_get_new_config_file_z_offset(new_config_file_location):
     if not found_z_offset_entry:
         return ''
     else:
-        update_file_content(new_config_file_location, file_contents)
+        common.update_file_content(new_config_file_location, file_contents)
         return z_endstop_entry_value
 
 
