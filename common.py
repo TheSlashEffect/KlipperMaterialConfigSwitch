@@ -7,6 +7,8 @@ import logging
 
 import scriptConfig
 
+from typing import List
+
 
 class Config:
 
@@ -32,14 +34,14 @@ class Config:
                                                 scriptConfig.PRINTER_CONFIG_FILE_BACKUP_EXTENSION)
 
 
-def print_error_and_exit(error_message):
+def print_error_and_exit(error_message: str) -> None:
     sys.stderr.write(error_message)
     # Flushing because the G-Code Shell Command Extension context we're running under handles output differently
     sys.stderr.flush()
     sys.exit(-1)
 
 
-def backup_klipper_config_file(config: Config):
+def backup_klipper_config_file(config: Config) -> None:
     print('Backing up original config file \'%s\' to \'%s\'... ' %
           (config.printer_config_file, config.klipper_config_backup_file_name),
           flush=True, end='')
@@ -47,11 +49,11 @@ def backup_klipper_config_file(config: Config):
     print('completed', flush=True)
 
 
-def file_exists(new_config_file_location):
+def file_exists(new_config_file_location: str) -> bool:
     return os.path.exists(new_config_file_location)
 
 
-def handle_file_write_error(config, e):
+def handle_file_write_error(config: Config, e: Exception) -> None:
     sys.stderr.write('Error! Writing to klipper config file %s failed!'
                      % config.printer_config_file)
     logging.exception(e)
@@ -67,7 +69,7 @@ def handle_file_write_error(config, e):
     sys.exit(-1)
 
 
-def update_file_content(file_path: str, new_file_contents):
+def update_file_content(file_path: str, new_file_contents: List[str]) -> None:
     try:
         klipper_config_file_write_stream = open(file_path, 'w')
         klipper_config_file_write_stream.writelines(new_file_contents)
@@ -77,21 +79,21 @@ def update_file_content(file_path: str, new_file_contents):
         sys.exit(1)
 
 
-def read_file_content_as_lines(file_path):
+def read_file_content_as_lines(file_path: str) -> List[str]:
     klipper_config_file_read_stream = open(file_path, 'r')
     file_contents = klipper_config_file_read_stream.readlines()
     klipper_config_file_read_stream.close()
     return file_contents
 
 
-def print_material_code_regex(config: Config):
+def print_material_code_regex(config: Config) -> None:
     sys.stderr.write('Configured material code regex is of form %s\n' % config.material_code_regex)
     if config.material_code_regex_example != '':
         sys.stderr.write('Example: %s\n' % config.material_code_regex_example)
     sys.stderr.flush()
 
 
-def get_user_input_code(config: Config, arguments):
+def get_user_input_code(config: Config, arguments: List[str]) -> str:
     if len(arguments) < 2:
         print('Usage: %s <material code>' % arguments[0])
         print_material_code_regex(config)
