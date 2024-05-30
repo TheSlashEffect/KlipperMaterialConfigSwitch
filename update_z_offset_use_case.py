@@ -10,7 +10,7 @@ class VerticalOffsetUpdateUseCase:
     def __init__(self, new_config: common.Config):
         self.config = new_config
 
-    def clear_and_get_new_config_file_z_offset(self):
+    def clear_and_get_new_config_file_z_offset(self) -> str:
         file_contents = common.read_file_content_as_lines(self.config.hardware_specific_config_file)
         z_endstop_entry_regex = r"([#])\s?(position_endstop_diff\s?=\s?([-]?\d*\.?\d+$))"
         z_endstop_entry_value = ''
@@ -36,12 +36,12 @@ class VerticalOffsetUpdateUseCase:
             common.update_file_content(self.config.hardware_specific_config_file, file_contents)
             return z_endstop_entry_value
 
-    def issue_z_offset_store_command(self, z_offset_diff):
+    def issue_z_offset_store_command(self, z_offset_diff: str) -> None:
         gcode_command = 'SAVE_VARIABLE VARIABLE=z_offset VALUE=' + z_offset_diff
         os.system("echo %s > %s" % (gcode_command, self.config.printer_pipe_file))
         print('Issuing gcode_command to store z offset to gcode variable: ', gcode_command)
 
-    def update_z_offset(self):
+    def update_z_offset(self) -> None:
         z_offset_diff = self.clear_and_get_new_config_file_z_offset()
         if z_offset_diff == '':
             return
