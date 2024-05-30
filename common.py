@@ -39,6 +39,14 @@ def print_error_and_exit(error_message):
     sys.exit(-1)
 
 
+def backup_klipper_config_file(config: Config):
+    print('Backing up original config file \'%s\' to \'%s\'... ' %
+          (config.printer_config_file, config.klipper_config_backup_file_name),
+          flush=True, end='')
+    shutil.copyfile(config.printer_config_file, config.klipper_config_backup_file_name)
+    print('completed', flush=True)
+
+
 def file_exists(new_config_file_location):
     return os.path.exists(new_config_file_location)
 

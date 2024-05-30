@@ -26,15 +26,6 @@ class UpdateConfigUseCase:
                                            new_config_material_code,
                                            new_material_code))
 
-    # TODO - CHKA: Move to commons
-    @staticmethod
-    def backup_klipper_config_file():
-        print('Backing up original config file \'%s\' to \'%s\'... ' %
-              (config.printer_config_file, config.klipper_config_backup_file_name),
-              flush=True, end='')
-        shutil.copyfile(config.printer_config_file, config.klipper_config_backup_file_name)
-        print('completed', flush=True)
-
     @staticmethod
     def get_material_config_entry_line_index(file_contents):
         # Relative to klipper directory
@@ -77,7 +68,7 @@ class UpdateConfigUseCase:
         print("      New config file: ", new_config_file_location)
         print(flush=True)
 
-        self.backup_klipper_config_file()
+        common.backup_klipper_config_file(config)
 
         self.update_klipper_config_material_entry(new_material_code)
 
