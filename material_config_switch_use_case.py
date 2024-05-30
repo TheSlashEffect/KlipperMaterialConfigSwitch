@@ -54,7 +54,7 @@ class UpdateConfigUseCase:
         if not common.file_exists(self.config.printer_config_file):
             common.print_error_and_exit('Printer config file %s does not exist!' % self.config.printer_config_file)
 
-        hardware_specific_config_file = os.path.join(self.config.material_directory, new_hardware_code + '.cfg')
+        hardware_specific_config_file = str(os.path.join(self.config.material_directory, new_hardware_code + '.cfg'))
         if not common.file_exists(hardware_specific_config_file):
             common.print_error_and_exit(
                 'Hardware configuration file %s does not exist!\n' % hardware_specific_config_file)
