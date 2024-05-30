@@ -3,6 +3,7 @@ import re
 import sys
 
 import common
+import update_z_offset_use_case
 
 
 class UpdateConfigUseCase:
@@ -72,8 +73,10 @@ if __name__ == '__main__':
     config = common.Config()
     input_code = common.get_user_input_code(config, sys.argv)
     config_updater = UpdateConfigUseCase(config)
-
     config_updater.update_config_file(input_code)
+
+    z_offset_update_use_case = update_z_offset_use_case.VerticalOffsetUpdateUseCase(config)
+    z_offset_update_use_case.update_z_offset(input_code)
 
     '''
     Steps:
