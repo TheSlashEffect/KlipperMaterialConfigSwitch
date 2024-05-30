@@ -50,23 +50,24 @@ class UpdateConfigUseCase:
             self.config.material_directory_relative, new_material_code)
         common.update_file_content(config.printer_config_file, file_contents)
 
-    def update_config_file(self, new_material_code):
+    def update_config_file(self, new_hardware_code):
         if not common.file_exists(self.config.printer_config_file):
             common.print_error_and_exit('Printer config file %s does not exist!' % self.config.printer_config_file)
 
-        new_config_file_location = os.path.join(self.config.material_directory, new_material_code + '.cfg')
-        if not common.file_exists(new_config_file_location):
-            common.print_error_and_exit('Material configuration file %s does not exist!\n' % new_config_file_location)
+        hardware_specific_config_file = os.path.join(self.config.material_directory, new_hardware_code + '.cfg')
+        if not common.file_exists(hardware_specific_config_file):
+            common.print_error_and_exit(
+                'Hardware configuration file %s does not exist!\n' % hardware_specific_config_file)
 
-        self.check_material_config_file_code(new_config_file_location, new_material_code)
+        self.check_material_config_file_code(hardware_specific_config_file, new_hardware_code)
 
-        print("Switching to material: ", new_material_code)
-        print("      New config file: ", new_config_file_location)
+        print("   Switching to hardware: ", new_hardware_code)
+        print("New hardware config file: ", hardware_specific_config_file)
         print(flush=True)
 
         common.backup_klipper_config_file(self.config)
 
-        self.update_klipper_config_material_entry(new_material_code)
+        self.update_klipper_config_material_entry(new_hardware_code)
 
 
 if __name__ == '__main__':
