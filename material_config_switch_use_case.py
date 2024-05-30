@@ -47,7 +47,7 @@ class UpdateConfigUseCase:
                                         % self.config.printer_config_file)
         file_contents[config_entry_line_index] = '[include %s/%s.cfg]\n' % (
             self.config.material_directory_relative, new_material_code)
-        common.update_file_content(config, file_contents)
+        common.update_file_content(config.printer_config_file, file_contents)
 
     def update_config_file(self, new_material_code):
         if not common.file_exists(self.config.printer_config_file):

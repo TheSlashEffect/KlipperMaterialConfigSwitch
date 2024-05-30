@@ -33,7 +33,7 @@ class VerticalOffsetUpdateUseCase:
         if not found_z_offset_entry:
             return ''
         else:
-            common.update_file_content(self.config, file_contents)
+            common.update_file_content(new_config_file_location, file_contents)
             return z_endstop_entry_value
 
     def issue_z_offset_store_command(self, z_offset_diff):

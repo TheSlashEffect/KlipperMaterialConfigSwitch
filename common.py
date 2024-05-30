@@ -67,9 +67,9 @@ def handle_file_write_error(config, e):
     sys.exit(-1)
 
 
-def update_file_content(config: Config, new_file_contents):
+def update_file_content(file_path: str, new_file_contents):
     try:
-        klipper_config_file_write_stream = open(config.printer_config_file, 'w')
+        klipper_config_file_write_stream = open(file_path, 'w')
         klipper_config_file_write_stream.writelines(new_file_contents)
         klipper_config_file_write_stream.close()
     except Exception as e:
