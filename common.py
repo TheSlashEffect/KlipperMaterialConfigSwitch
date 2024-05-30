@@ -5,21 +5,31 @@ import sys
 import shutil
 import logging
 
-# You can use these entries to run this script locally using the GitHub provided folder structure
-PRINTER_CONFIG_FILE = 'printer.cfg'
-MATERIAL_DIRECTORY = 'MaterialSpecificConfigs'
+import scriptConfig
 
-# Absolute path, must be under your klipper config directory
-# MATERIAL_DIRECTORY = '/home/fly/klipper_config/MaterialSpecificConfigs/'
-# Absolute path
-# PRINTER_CONFIG_FILE = '/home/fly/klipper_config/printer.cfg'
-PRINTER_CONFIG_FILE_BACKUP_EXTENSION = '.bup'
-MATERIAL_CODE_REGEX = r"[A-Z]{3}\d{3}$"
-MATERIAL_CODE_REGEX_EXAMPLE = 'PLA001'  # Leave empty if you don't want to add an example
-PRINTER_PIPE_FILE = '/tmp/printer'
-# TODO - CHKA: Create class and move variables like this to an initialization phase
-material_directory_relative = os.path.basename(os.path.normpath(MATERIAL_DIRECTORY))
-klipper_config_backup_file_name = PRINTER_CONFIG_FILE + PRINTER_CONFIG_FILE_BACKUP_EXTENSION
+
+class Config:
+
+    # TODO - Use YAML file for config
+    def initialize_from_config_file(self):
+        self.printer_config_file = scriptConfig.PRINTER_CONFIG_FILE
+        self.material_directory = scriptConfig.MATERIAL_DIRECTORY
+        self.printer_config_file_backup_extension = scriptConfig.PRINTER_CONFIG_FILE_BACKUP_EXTENSION
+        self.material_code_regex = scriptConfig.MATERIAL_CODE_REGEX
+        self.material_code_regex_example = scriptConfig.MATERIAL_CODE_REGEX_EXAMPLE
+        self.printer_pipe_file = scriptConfig.PRINTER_PIPE_FILE
+
+    def __init__(self):
+        self.printer_pipe_file = None
+        self.material_code_regex_example = None
+        self.material_code_regex = None
+        self.printer_config_file_backup_extension = None
+        self.material_directory = None
+        self.printer_config_file = None
+        self.initialize_from_config_file()
+        self.material_directory_relative = os.path.basename(os.path.normpath(scriptConfig.MATERIAL_DIRECTORY))
+        self.klipper_config_backup_file_name = (scriptConfig.PRINTER_CONFIG_FILE +
+                                                scriptConfig.PRINTER_CONFIG_FILE_BACKUP_EXTENSION)
 
 
 def print_error_and_exit(error_message):
@@ -33,25 +43,25 @@ def file_exists(new_config_file_location):
     return os.path.exists(new_config_file_location)
 
 
-def handle_file_write_error(e):
+def handle_file_write_error(config, e):
     sys.stderr.write('Error! Writing to klipper config file %s failed!'
-                     % PRINTER_CONFIG_FILE)
+                     % config.printer_config_file)
     logging.exception(e)
 
-    if not file_exists(klipper_config_backup_file_name):
+    if not file_exists(config.klipper_config_backup_file_name):
         print_error_and_exit('No backup file %s found! Check backup file extension. Aborting...' %
-                             klipper_config_backup_file_name)
+                             config.klipper_config_backup_file_name)
 
-    sys.stderr.write('Attempting to recover from file %s\n' % klipper_config_backup_file_name)
+    sys.stderr.write('Attempting to recover from file %s\n' % config.klipper_config_backup_file_name)
     sys.stderr.flush()
 
-    shutil.copyfile(klipper_config_backup_file_name, PRINTER_CONFIG_FILE)
+    shutil.copyfile(config.klipper_config_backup_file_name, config.printer_config_file)
     sys.exit(-1)
 
 
-def update_file_content(printer_config_file, new_file_contents):
+def update_file_content(config: Config, new_file_contents):
     try:
-        klipper_config_file_write_stream = open(printer_config_file, 'w')
+        klipper_config_file_write_stream = open(config.printer_config_file, 'w')
         klipper_config_file_write_stream.writelines(new_file_contents)
         klipper_config_file_write_stream.close()
     except Exception as e:
@@ -66,25 +76,25 @@ def read_file_content_as_lines(file_path):
     return file_contents
 
 
-def print_material_code_regex():
-    sys.stderr.write('Configured material code regex is of form %s\n' % MATERIAL_CODE_REGEX)
-    if MATERIAL_CODE_REGEX_EXAMPLE != '':
-        sys.stderr.write('Example: %s\n' % MATERIAL_CODE_REGEX_EXAMPLE)
+def print_material_code_regex(config: Config):
+    sys.stderr.write('Configured material code regex is of form %s\n' % config.material_code_regex)
+    if config.material_code_regex_example != '':
+        sys.stderr.write('Example: %s\n' % config.material_code_regex_example)
     sys.stderr.flush()
 
 
-def get_user_input_code(arguments):
+def get_user_input_code(config: Config, arguments):
     if len(arguments) < 2:
         print('Usage: %s <material code>' % arguments[0])
-        print_material_code_regex()
+        print_material_code_regex(config)
         sys.exit(-1)
 
     user_input_code = sys.argv[1]
 
     # Step 1
-    if not re.match(MATERIAL_CODE_REGEX, user_input_code):
+    if not re.match(config.material_code_regex, user_input_code):
         sys.stderr.write('Input code error \'%s\'! Please provide a valid material code\n' % user_input_code)
-        print_material_code_regex()
+        print_material_code_regex(config)
         sys.exit(-1)
 
     return user_input_code
