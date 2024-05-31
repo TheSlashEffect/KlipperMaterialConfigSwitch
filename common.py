@@ -56,6 +56,14 @@ def file_exists(new_config_file_location: str) -> bool:
     return os.path.exists(new_config_file_location)
 
 
+def attempt_backup_recovery(config: Config) -> None:
+    sys.stderr.write('Attempting to recover from file %s\n' % config.klipper_config_backup_file_name)
+    sys.stderr.flush()
+
+    shutil.copyfile(config.klipper_config_backup_file_name, config.printer_config_file)
+    sys.exit(-1)
+
+
 def handle_file_write_error(config: Config, e: Exception) -> None:
     sys.stderr.write('Error! Writing to klipper config file %s failed!'
                      % config.printer_config_file)
@@ -65,11 +73,7 @@ def handle_file_write_error(config: Config, e: Exception) -> None:
         print_error_and_exit('No backup file %s found! Check backup file extension. Aborting...' %
                              config.klipper_config_backup_file_name)
 
-    sys.stderr.write('Attempting to recover from file %s\n' % config.klipper_config_backup_file_name)
-    sys.stderr.flush()
-
-    shutil.copyfile(config.klipper_config_backup_file_name, config.printer_config_file)
-    sys.exit(-1)
+    attempt_backup_recovery(config)
 
 
 def update_file_content(file_path: str, new_file_contents: List[str]) -> None:
