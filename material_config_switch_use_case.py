@@ -29,7 +29,7 @@ class UpdateConfigUseCase:
     def get_hardware_config_entry_line_index(self, file_contents: List[str]) -> int:
         # Relative to main klipper config directory
         hardware_file_import_entry_regex = r"\[include " + \
-                                           self.config.material_directory_relative + r"\/" + \
+                                           self.config.hardware_directory_relative + r"\/" + \
                                            self.config.material_code_regex[:-1] + r".cfg\]"
         found_import_directive = False
         config_entry_line_index = -1
@@ -45,11 +45,11 @@ class UpdateConfigUseCase:
         file_contents = common.read_file_content_as_lines(self.config.printer_config_file)
         config_entry_line_index = self.get_hardware_config_entry_line_index(file_contents)
         if config_entry_line_index == -1:
-            common.print_error_and_exit('Did not find any include directive in klipper config file %s!'
+            common.print_error_and_exit('Did not find include directive for %s in klipper config file %s!\n'
                                         'No changes were made!\n'
-                                        % self.config.printer_config_file)
+                                        % (self.config.hardware_directory, self.config.printer_config_file))
         file_contents[config_entry_line_index] = '[include %s/%s.cfg]\n' % (
-            self.config.material_directory_relative, new_material_code)
+            self.config.hardware_directory_relative, new_material_code)
         common.update_file_content(config.printer_config_file, file_contents)
 
     def update_config_file(self) -> None:
@@ -72,8 +72,8 @@ class UpdateConfigUseCase:
 
 
 if __name__ == '__main__':
-    hardware_code = common.get_user_input_code(sys.argv)
-    config = common.Config(hardware_code)
+    hardware_switch_option, hardware_code = common.get_user_input_arguments(sys.argv)
+    config = common.Config(hardware_switch_option, hardware_code)
     config_updater = UpdateConfigUseCase(config)
     config_updater.update_config_file()
 

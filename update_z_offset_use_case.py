@@ -49,7 +49,7 @@ class VerticalOffsetUpdateUseCase:
 
 
 if __name__ == '__main__':
-    hardware_code = common.get_user_input_code(sys.argv)
-    config = common.Config(hardware_code)
+    mode, hardware_code = common.get_user_input_arguments(sys.argv)
+    config = common.Config(mode, hardware_code)
     vertical_offset_update_use_case = VerticalOffsetUpdateUseCase(config)
     vertical_offset_update_use_case.update_z_offset()
