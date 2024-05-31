@@ -31,14 +31,15 @@ class UpdateConfigUseCase:
         hardware_file_import_entry_regex = r"\[include " + \
                                            self.config.material_directory_relative + r"\/" + \
                                            self.config.material_code_regex[:-1] + r".cfg\]"
-
+        found_import_directive = False
         config_entry_line_index = -1
         for line in file_contents:
             config_entry_line_index += 1
             if re.match(hardware_file_import_entry_regex, line):
                 print('Old material config file include entry: \n%s\n' % line, flush=True)
+                found_import_directive = True
                 break
-        return config_entry_line_index
+        return config_entry_line_index if found_import_directive else -1
 
     def update_klipper_config_material_entry(self, new_material_code: str) -> None:
         file_contents = common.read_file_content_as_lines(self.config.printer_config_file)
