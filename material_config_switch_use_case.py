@@ -39,7 +39,6 @@ class UpdateConfigUseCase:
                 break
         return config_entry_line_index
 
-    # TODO - CHKA: Do not update file if new and existing entry match
     def update_klipper_config_material_entry(self, new_material_code: str) -> None:
         file_contents = common.read_file_content_as_lines(self.config.printer_config_file)
         config_entry_line_index = self.get_hardware_config_entry_line_index(file_contents)
