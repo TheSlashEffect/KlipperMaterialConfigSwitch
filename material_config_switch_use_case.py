@@ -4,13 +4,15 @@ import sys
 import common
 import update_z_offset_use_case
 
+from typing import List
+
 
 class UpdateConfigUseCase:
 
     def __init__(self, new_config: common.Config):
         self.config = new_config
 
-    def check_hardware_config_file_validity(self, new_hardware_config_path, new_hardware_code_input):
+    def check_hardware_config_file_validity(self, new_hardware_config_path: str, new_hardware_code_input: str) -> None:
         with open(new_hardware_config_path) as f:
             new_hardware_config_code = f.readline().strip()[1:]  # Line is comment, starts with '#'
             if not re.match(self.config.material_code_regex, new_hardware_config_code):
@@ -23,7 +25,7 @@ class UpdateConfigUseCase:
                                            new_hardware_config_code,
                                            new_hardware_code_input))
 
-    def get_hardware_config_entry_line_index(self, file_contents):
+    def get_hardware_config_entry_line_index(self, file_contents: List[str]) -> int:
         # Relative to klipper directory
         hardware_file_import_entry_regex = r"\[include " + \
                                            self.config.material_directory_relative + r"\/" + \
@@ -38,7 +40,7 @@ class UpdateConfigUseCase:
         return config_entry_line_index
 
     # TODO - CHKA: Do not update file if new and existing entry match
-    def update_klipper_config_material_entry(self, new_material_code):
+    def update_klipper_config_material_entry(self, new_material_code: str) -> None:
         file_contents = common.read_file_content_as_lines(self.config.printer_config_file)
         config_entry_line_index = self.get_hardware_config_entry_line_index(file_contents)
         if config_entry_line_index == -1:
@@ -49,7 +51,7 @@ class UpdateConfigUseCase:
             self.config.material_directory_relative, new_material_code)
         common.update_file_content(config.printer_config_file, file_contents)
 
-    def update_config_file(self, new_hardware_code):
+    def update_config_file(self, new_hardware_code: str) -> None:
         if not common.file_exists(self.config.printer_config_file):
             common.print_error_and_exit('Printer config file %s does not exist!' % self.config.printer_config_file)
 
