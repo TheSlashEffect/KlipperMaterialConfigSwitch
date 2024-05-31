@@ -16,7 +16,7 @@ you have the knowledge to set up klipper this will be more than doable.
 Each material has its own configuration file.
 We can choose what parameters change, such as hotend/bed temperature, 
 pid values, or even things like minimum/maximum extrusion temperature.
-We can choose various different kinds of hardware to change with each script, such as toolheads, nozzles, build surfaces, etc.\
+We can choose various different kinds of hardware to change with each macro, such as toolheads, nozzles, build surfaces, etc.\
 For each such hardware we create a mode-directory pair in _scriptConfig.py_, as such:
 
     modes = {'-m': 'MaterialSpecificConfigs', '-t': 'ToolheadSpecificConfigs'}
@@ -25,12 +25,12 @@ For each such hardware we create a mode-directory pair in _scriptConfig.py_, as 
 ![](images/materialConfigView.PNG "")
 * Figure 1.2: Interface showing material specific configuration files
 
-printer.cfg now imports this file as such:
+printer.cfg now imports files from each directory as such:
 
 `[include MaterialSpecificConfigs/PLA001.cfg]` 
 
-Each material/hardware is identified by a hardware code. I write this code on the
-spool with a sharpie, so I know which macro to use when I insert a new roll.
+Each hardware, one case being different printing materials, is identified by a hardware code. I write this code on each
+spool so I know which macro to use upon switching rolls.
 The default form is AAA999, but can be set in the "HARDWARE_CODE_REGEX" entry 
 in _scriptConfig.py_. Config files are named `{HARDWARE_CODE}.cfg`,
 and contain a comment with their material code in the first line, like so:
@@ -40,8 +40,9 @@ and contain a comment with their material code in the first line, like so:
 This is to ensure that we are not importing any files we did not mean to or edited by accident, and burning our house down in the process.
 
 Any value in the config files also present in printer.cfg will be overwritten by the entry in 
-the latter. Consult [LDO's guide on configuration read order](https://docs.ldomotors.com/en/guides/klipper_multi_cfg_guide#read-order)
-if you want to change this behaviour in the script.
+the latter. Consult [LDO's guide on configuration read order](https://docs.ldomotors.com/en/guides/klipper_multi_cfg_guide#read-order).
+The script modifies existing entries found for each hardware type (_MaterialSpecificConfigs_ in this example), 
+so the import order you choose is kept the same.
 
 Take note that a backup of **printer.cfg** named **printer.cfg.bup** is created before the script modifies **printer.cfg**.
 
@@ -83,15 +84,18 @@ gcode macro in printer.cfg. The value added here is read upon klipper restart.
   5. Add entries of the form `{mode, hardware_type}` items to the `modes` variable in _scriptConfig.py_ , where *mode* is an arbitrary name of your choice
 and *hardware_type* being a hardware you want to switch between, in our example printing materials.
      Said paths are expressed relative to klipper's main config directory.
-  6. Change "**PRINTER_CONFIG_FILE**" in _scriptConfig.py_ to printer.cfg's location.
+  6. Add an initial include directive for each hardware type in _printer.cfg_
 
-  7. In printer.cfg, add the following entry. This calls the driver script.
+    [include MaterialSpecificConfig/PLA001.cfg]
+
+  7. Again, in printer.cfg, add the following macro. This calls the driver script.
 ```cfg
 [gcode_shell_command material_config_switch]
 command: python3 {SCRIPT_LOCATION}/material_config_switch_use_case.py
 ```
+  8. Change "**PRINTER_CONFIG_FILE**" in _scriptConfig.py_ to printer.cfg's location.
 
-  8. Create a macro for each material, as such
+  9. Create a macro for each material, as such
 ```cfg
 [gcode_macro PLA001]
 gcode:
@@ -100,7 +104,7 @@ gcode:
 where "m" is the mode and "PLA001" is the hardware code.
 
 ### Important!!!
-  9. **Make sure to enable `Disabled while printing` in order to not accidentally run 
+  10. **Make sure to enable `Disabled while printing` in order to not accidentally run 
 this and restart klipper mid-print.**
 
 <img src="images/macroSettings.PNG" alt="drawing" width="500"/>
