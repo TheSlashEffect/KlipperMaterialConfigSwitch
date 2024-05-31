@@ -27,7 +27,7 @@ class UpdateConfigUseCase:
                                            config.hardware_code))
 
     def get_hardware_config_entry_line_index(self, file_contents: List[str]) -> int:
-        # Relative to klipper directory
+        # Relative to main klipper config directory
         hardware_file_import_entry_regex = r"\[include " + \
                                            self.config.material_directory_relative + r"\/" + \
                                            self.config.material_code_regex[:-1] + r".cfg\]"
