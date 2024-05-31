@@ -1,3 +1,4 @@
+import os
 import re
 import sys
 
@@ -77,6 +78,9 @@ if __name__ == '__main__':
 
     z_offset_update_use_case = update_z_offset_use_case.VerticalOffsetUpdateUseCase(config)
     z_offset_update_use_case.update_z_offset()
+
+    # Restart klipper
+    os.system("echo FIRMWARE_RESTART > /tmp/printer")
 
     '''
     Steps:
