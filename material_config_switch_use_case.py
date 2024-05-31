@@ -12,18 +12,18 @@ class UpdateConfigUseCase:
     def __init__(self, new_config: common.Config):
         self.config = new_config
 
-    def check_hardware_config_file_validity(self, new_hardware_config_path: str, new_hardware_code_input: str) -> None:
+    def check_hardware_config_file_validity(self, new_hardware_config_path: str) -> None:
         with open(new_hardware_config_path) as f:
             new_hardware_config_code = f.readline().strip()[1:]  # Line is comment, starts with '#'
             if not re.match(self.config.material_code_regex, new_hardware_config_code):
                 common.print_error_and_exit(
                     "Provided file does not start with a valid material code: %s\n" % new_hardware_config_code)
 
-        if new_hardware_config_code != new_hardware_code_input:
+        if new_hardware_config_code != config.hardware_code:
             common.print_error_and_exit('File %s\'s material code %s does not match file name %s'
                                         % (new_hardware_config_path,
                                            new_hardware_config_code,
-                                           new_hardware_code_input))
+                                           config.hardware_code))
 
     def get_hardware_config_entry_line_index(self, file_contents: List[str]) -> int:
         # Relative to klipper directory
@@ -59,7 +59,7 @@ class UpdateConfigUseCase:
             common.print_error_and_exit(
                 'Hardware configuration file %s does not exist!\n' % config.hardware_specific_config_file)
 
-        self.check_hardware_config_file_validity(config.hardware_specific_config_file, config.hardware_code)
+        self.check_hardware_config_file_validity(config.hardware_specific_config_file)
 
         print("   Switching to hardware: ", config.hardware_code)
         print("New hardware config file: ", config.hardware_specific_config_file)
