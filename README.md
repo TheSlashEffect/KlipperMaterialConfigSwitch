@@ -1,4 +1,4 @@
-# Material configuration switch macros
+# Klipper Material/Hardware configuration switch macros
 
 I wanted to be able to switch between filaments without having to adjust filament dependent
 settings such as pid values, z offset (squish), etc. by hand.
@@ -6,6 +6,8 @@ Most people achieve all or part of this functionality using their slicer, but I 
 the slicer used and would not depend on gcode file metadata.
 The python script and configuration layout shown here achieve that with gcode macros and only one simple requirement utility.
 This logic can be used to switch between other hardware as well, such as toolheads, nozzles, build surfaces, etc.
+I want to keep this tool as dependency-free and user-friendly as possible, making it non-programmer friendly as well. If
+you have the knowledge to set up klipper this will be more than doable.
 
 ![](images/browserViewFull.PNG "")
 * Figure 1.1: Interface overview showing example macros
