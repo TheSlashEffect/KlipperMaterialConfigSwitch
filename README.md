@@ -16,8 +16,11 @@ you have the knowledge to set up klipper this will be more than doable.
 Each material has its own configuration file.
 We can choose what parameters change, such as hotend/bed temperature, 
 pid values, or even things like minimum/maximum extrusion temperature.
-Based on what parameters we choose this can also apply to
-switching between toolheads, nozzles, build surfaces, etc.
+We can choose various different kinds of hardware to change with each script, such as toolheads, nozzles, build surfaces, etc.\
+For each such hardware we create a mode-directory pair in _scriptConfig.py_, as such:
+
+    modes = {'-m': 'MaterialSpecificConfigs', '-t': 'ToolheadSpecificConfigs'}
+
 
 ![](images/materialConfigView.PNG "")
 * Figure 1.2: Interface showing material specific configuration files
@@ -26,10 +29,10 @@ printer.cfg now imports this file as such:
 
 `[include MaterialSpecificConfigs/PLA001.cfg]` 
 
-Each material is identified by a material code. I write this code on the
+Each material/hardware is identified by a hardware code. I write this code on the
 spool with a sharpie, so I know which macro to use when I insert a new roll.
-The default form is AAA999, but can be set in the "MATERIAL_CODE_REGEX" entry 
-in _scriptConfig.py_. Config files are named `{MATERIAL_CODE}.cfg`,
+The default form is AAA999, but can be set in the "HARDWARE_CODE_REGEX" entry 
+in _scriptConfig.py_. Config files are named `{HARDWARE_CODE}.cfg`,
 and contain a comment with their material code in the first line, like so:
 
 `#PLA001`
@@ -57,13 +60,13 @@ Please review the code before using it!!!**
 File import hierarchy can still be applied here, note how in my example in Figure 1.3 I have a separate file for the bed PID, which I reuse across 
 material config files.
 
-  3. Name each file **{MATERIAL_CODE}.cfg**, with the first line containing
-a comment with the same material code, as shown in Figure 1.3. This is 
-done to make sure we don't use files which we did not create manually for these purposes.
+  3. Name each file **{HARDWARE_CODE}.cfg**, with the first line containing
+a comment with the same hardware code, as shown in Figure 1.3. This is 
+done to make sure we don't use files which we did not manually create for these purposes.
   4. (Optional) One can add a per-material z_offset value in the format shown below. This value is 
     an offset to the _position_endstop_ set in printer.cfg. To use this functionality, you must enable
     [save_variables](https://www.klipper3d.org/Config_Reference.html#save_variables) and add the following delayed
-gcode macro in printer.cfg
+gcode macro in printer.cfg. The value added here is read upon klipper restart.
 
     [delayed_gcode load_z_offset]
     initial_duration: 2
@@ -72,31 +75,32 @@ gcode macro in printer.cfg
         SET_GCODE_OFFSET Z_ADJUST={svv.z_offset} MOVE=0
 
 ![](images/materialSpecificConfig.PNG "")
-* Figure 1.3: Example of material specific config file
+* Figure 1.3: Example of hardware specific config file for a PLA roll
 
 
   4. Download all python scripts and place them in any directory. Take note of this path.
 
-  5. Change "**MATERIAL_DIRECTORY**" in _scriptConfig.py_ to the directory containing your material specific configuration files,
-     relative to klipper's main config directory.
-     Change "**PRINTER_CONFIG_FILE**" to printer.cfg's location.
+  5. Add entries of the form `{mode, hardware_type}` items to the `modes` variable in _scriptConfig.py_ , where *mode* is an arbitrary name of your choice
+and *hardware_type* being a hardware you want to switch between, in our example printing materials.
+     Said paths are expressed relative to klipper's main config directory.
+  6. Change "**PRINTER_CONFIG_FILE**" in _scriptConfig.py_ to printer.cfg's location.
 
-  6. In printer.cfg, add the following entry. This calls the driver script.
+  7. In printer.cfg, add the following entry. This calls the driver script.
 ```cfg
 [gcode_shell_command material_config_switch]
 command: python3 {SCRIPT_LOCATION}/material_config_switch_use_case.py
 ```
 
-  7. Create a macro for each material, as such
+  8. Create a macro for each material, as such
 ```cfg
 [gcode_macro PLA001]
 gcode:
-    RUN_SHELL_COMMAND CMD=material_config_switch PARAMS=PLA001
+    RUN_SHELL_COMMAND CMD=material_config_switch PARAMS="-m, PLA001"
 ```
-where "PLA001" is the material code.
+where "m" is the mode and "PLA001" is the hardware code.
 
 ### Important!!!
-  8. **Make sure to enable `Disabled while printing` in order to not accidentally run 
+  9. **Make sure to enable `Disabled while printing` in order to not accidentally run 
 this and restart klipper mid-print.**
 
 <img src="images/macroSettings.PNG" alt="drawing" width="500"/>

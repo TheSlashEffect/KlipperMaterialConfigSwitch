@@ -18,8 +18,8 @@ class Config:
         self.hardware_directory = scriptConfig.modes[mode]
         self.hardware_directory_relative = os.path.basename(os.path.normpath(self.hardware_directory))
         self.printer_config_file_backup_extension = scriptConfig.PRINTER_CONFIG_FILE_BACKUP_EXTENSION
-        self.material_code_regex = scriptConfig.MATERIAL_CODE_REGEX
-        self.material_code_regex_example = scriptConfig.MATERIAL_CODE_REGEX_EXAMPLE
+        self.material_code_regex = scriptConfig.HARDWARE_CODE_REGEX
+        self.material_code_regex_example = scriptConfig.HARDWARE_CODE_REGEX_EXAMPLE
         self.printer_pipe_file = scriptConfig.PRINTER_PIPE_FILE
 
     def __init__(self, mode: str, hardware_code: str):
@@ -95,9 +95,9 @@ def read_file_content_as_lines(file_path: str) -> List[str]:
 
 
 def print_material_code_regex() -> None:
-    sys.stderr.write('Configured material code regex is of form %s\n' % scriptConfig.MATERIAL_CODE_REGEX)
-    if scriptConfig.MATERIAL_CODE_REGEX_EXAMPLE != '':
-        sys.stderr.write('Example: %s\n' % scriptConfig.MATERIAL_CODE_REGEX_EXAMPLE)
+    sys.stderr.write('Configured material code regex is of form %s\n' % scriptConfig.HARDWARE_CODE_REGEX)
+    if scriptConfig.HARDWARE_CODE_REGEX_EXAMPLE != '':
+        sys.stderr.write('Example: %s\n' % scriptConfig.HARDWARE_CODE_REGEX_EXAMPLE)
     sys.stderr.flush()
 
 
@@ -106,7 +106,7 @@ def check_user_input_validity(hardware_mode: str, user_input_code: str):
         print_error_and_exit('Invalid mode: %s\nAvailable modes:\n%s' %
                              (hardware_mode, str([i for i in scriptConfig.modes])))
 
-    if not re.match(scriptConfig.MATERIAL_CODE_REGEX, user_input_code):
+    if not re.match(scriptConfig.HARDWARE_CODE_REGEX, user_input_code):
         sys.stderr.write('Input code error \'%s\'! Please provide a valid material code\n' % user_input_code)
         print_material_code_regex()
         sys.exit(-1)

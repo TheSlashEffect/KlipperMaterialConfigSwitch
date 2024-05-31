@@ -9,6 +9,6 @@ PRINTER_CONFIG_FILE = '/home/fly/klipper_config/printer.cfg'
 modes = {'-m': '/home/fly/klipper_config/MaterialSpecificConfigs',
          '-t': '/home/fly/klipper_config/ToolheadSpecificConfigs'}
 PRINTER_CONFIG_FILE_BACKUP_EXTENSION = '.bup'
-MATERIAL_CODE_REGEX = r"[A-Z]{3}\d{3}$"
-MATERIAL_CODE_REGEX_EXAMPLE = 'PLA001'  # Leave empty if you don't want to add an example
+HARDWARE_CODE_REGEX = r"[A-Z]{3}\d{3}$"
+HARDWARE_CODE_REGEX_EXAMPLE = 'PLA001'  # Leave empty if you don't want to add an example
 PRINTER_PIPE_FILE = '/tmp/printer'
