@@ -10,29 +10,29 @@ class UpdateConfigUseCase:
     def __init__(self, new_config: common.Config):
         self.config = new_config
 
-    def check_material_config_file_code(self, new_config_file_path, new_material_code):
-        with open(new_config_file_path) as f:
-            new_config_material_code = f.readline().strip()[1:]  # Line is comment, starts with '#'
-            if not re.match(self.config.material_code_regex, new_config_material_code):
+    def check_hardware_config_file_validity(self, new_hardware_config_path, new_hardware_code_input):
+        with open(new_hardware_config_path) as f:
+            new_hardware_config_code = f.readline().strip()[1:]  # Line is comment, starts with '#'
+            if not re.match(self.config.material_code_regex, new_hardware_config_code):
                 common.print_error_and_exit(
-                    "Provided file does not start with a valid material code: %s\n" % new_config_material_code)
+                    "Provided file does not start with a valid material code: %s\n" % new_hardware_config_code)
 
-        if new_config_material_code != new_material_code:
+        if new_hardware_config_code != new_hardware_code_input:
             common.print_error_and_exit('File %s\'s material code %s does not match file name %s'
-                                        % (new_config_file_path,
-                                           new_config_material_code,
-                                           new_material_code))
+                                        % (new_hardware_config_path,
+                                           new_hardware_config_code,
+                                           new_hardware_code_input))
 
-    def get_material_config_entry_line_index(self, file_contents):
+    def get_hardware_config_entry_line_index(self, file_contents):
         # Relative to klipper directory
-        include_directive_regex = r"\[include " + \
-                                  self.config.material_directory_relative + r"\/" + \
-                                  self.config.material_code_regex[:-1] + r".cfg\]"
+        hardware_file_import_entry_regex = r"\[include " + \
+                                           self.config.material_directory_relative + r"\/" + \
+                                           self.config.material_code_regex[:-1] + r".cfg\]"
 
         config_entry_line_index = -1
         for line in file_contents:
             config_entry_line_index += 1
-            if re.match(include_directive_regex, line):
+            if re.match(hardware_file_import_entry_regex, line):
                 print('Old material config file include entry: \n%s\n' % line, flush=True)
                 break
         return config_entry_line_index
@@ -40,7 +40,7 @@ class UpdateConfigUseCase:
     # TODO - CHKA: Do not update file if new and existing entry match
     def update_klipper_config_material_entry(self, new_material_code):
         file_contents = common.read_file_content_as_lines(self.config.printer_config_file)
-        config_entry_line_index = self.get_material_config_entry_line_index(file_contents)
+        config_entry_line_index = self.get_hardware_config_entry_line_index(file_contents)
         if config_entry_line_index == -1:
             common.print_error_and_exit('Did not find any include directive in klipper config file %s!'
                                         'No changes were made!\n'
@@ -57,7 +57,7 @@ class UpdateConfigUseCase:
             common.print_error_and_exit(
                 'Hardware configuration file %s does not exist!\n' % config.hardware_specific_config_file)
 
-        self.check_material_config_file_code(config.hardware_specific_config_file, new_hardware_code)
+        self.check_hardware_config_file_validity(config.hardware_specific_config_file, new_hardware_code)
 
         print("   Switching to hardware: ", new_hardware_code)
         print("New hardware config file: ", config.hardware_specific_config_file)
