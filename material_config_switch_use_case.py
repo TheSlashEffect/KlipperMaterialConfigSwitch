@@ -51,7 +51,7 @@ class UpdateConfigUseCase:
             self.config.material_directory_relative, new_material_code)
         common.update_file_content(config.printer_config_file, file_contents)
 
-    def update_config_file(self, new_hardware_code: str) -> None:
+    def update_config_file(self) -> None:
         if not common.file_exists(self.config.printer_config_file):
             common.print_error_and_exit('Printer config file %s does not exist!' % self.config.printer_config_file)
 
@@ -59,22 +59,22 @@ class UpdateConfigUseCase:
             common.print_error_and_exit(
                 'Hardware configuration file %s does not exist!\n' % config.hardware_specific_config_file)
 
-        self.check_hardware_config_file_validity(config.hardware_specific_config_file, new_hardware_code)
+        self.check_hardware_config_file_validity(config.hardware_specific_config_file, config.hardware_code)
 
-        print("   Switching to hardware: ", new_hardware_code)
+        print("   Switching to hardware: ", config.hardware_code)
         print("New hardware config file: ", config.hardware_specific_config_file)
         print(flush=True)
 
         common.backup_klipper_config_file(self.config)
 
-        self.update_klipper_config_material_entry(new_hardware_code)
+        self.update_klipper_config_material_entry(config.hardware_code)
 
 
 if __name__ == '__main__':
     hardware_code = common.get_user_input_code(sys.argv)
     config = common.Config(hardware_code)
     config_updater = UpdateConfigUseCase(config)
-    config_updater.update_config_file(hardware_code)
+    config_updater.update_config_file()
 
     z_offset_update_use_case = update_z_offset_use_case.VerticalOffsetUpdateUseCase(config)
     z_offset_update_use_case.update_z_offset()
