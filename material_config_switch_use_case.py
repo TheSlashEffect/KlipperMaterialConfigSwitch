@@ -16,12 +16,12 @@ class UpdateConfigUseCase:
     def check_hardware_config_file_validity(self, new_hardware_config_path: str) -> None:
         with open(new_hardware_config_path) as f:
             new_hardware_config_code = f.readline().strip()[1:]  # Line is comment, starts with '#'
-            if not re.match(self.config.material_code_regex, new_hardware_config_code):
+            if not re.match(self.config.hardware_code_regex, new_hardware_config_code):
                 common.print_error_and_exit(
-                    "Provided file does not start with a valid material code: %s\n" % new_hardware_config_code)
+                    "Provided file does not start with a valid hardware code: %s\n" % new_hardware_config_code)
 
         if new_hardware_config_code != config.hardware_code:
-            common.print_error_and_exit('File %s\'s material code %s does not match file name %s'
+            common.print_error_and_exit('File %s\'s hardware code %s does not match file name %s'
                                         % (new_hardware_config_path,
                                            new_hardware_config_code,
                                            config.hardware_code))
@@ -30,18 +30,18 @@ class UpdateConfigUseCase:
         # Relative to main klipper config directory
         hardware_file_import_entry_regex = r"\[include " + \
                                            self.config.hardware_directory_relative + r"\/" + \
-                                           self.config.material_code_regex[:-1] + r".cfg\]"
+                                           self.config.hardware_code_regex[:-1] + r".cfg\]"
         found_import_directive = False
         config_entry_line_index = -1
         for line in file_contents:
             config_entry_line_index += 1
             if re.match(hardware_file_import_entry_regex, line):
-                print('Old material config file include entry: \n%s\n' % line, flush=True)
+                print('Old hardware config file include entry: \n%s\n' % line, flush=True)
                 found_import_directive = True
                 break
         return config_entry_line_index if found_import_directive else -1
 
-    def update_klipper_config_material_entry(self, new_material_code: str) -> None:
+    def update_klipper_config_hardware_entry(self, new_hardware_code: str) -> None:
         file_contents = common.read_file_content_as_lines(self.config.printer_config_file)
         config_entry_line_index = self.get_hardware_config_entry_line_index(file_contents)
         if config_entry_line_index == -1:
@@ -49,7 +49,7 @@ class UpdateConfigUseCase:
                                         'No changes were made!\n'
                                         % (self.config.hardware_directory, self.config.printer_config_file))
         file_contents[config_entry_line_index] = '[include %s/%s.cfg]\n' % (
-            self.config.hardware_directory_relative, new_material_code)
+            self.config.hardware_directory_relative, new_hardware_code)
         common.update_file_content(config.printer_config_file, file_contents)
 
     def update_config_file(self) -> None:
@@ -68,7 +68,7 @@ class UpdateConfigUseCase:
 
         common.backup_klipper_config_file(self.config)
 
-        self.update_klipper_config_material_entry(config.hardware_code)
+        self.update_klipper_config_hardware_entry(config.hardware_code)
 
 
 if __name__ == '__main__':
@@ -85,9 +85,9 @@ if __name__ == '__main__':
 
     '''
     Steps:
-    1. Confirm that the user input material code complies with the regex format
+    1. Confirm that the user provided hardware code complies with the regex format
     2. Check that a config file with the desired hardware code exists
-    3. Confirm that said file starts with a regex compliant material code
+    3. Confirm that said file starts with a regex compliant hardware code
     4. Create backup of printer.cfg before modifying it (ie. printer.cfg{PRINTER_CONFIG_FILE_BACKUP_EXTENSION})
     5. Update printer.cfg with new hardware config include directive
     6. Store z offset to printer's disk variables using SAVE_VARIABLE

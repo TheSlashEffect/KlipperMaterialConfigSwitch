@@ -14,7 +14,7 @@ you have the knowledge to set up klipper this will be more than doable.
 * Figure 1.1: Interface overview showing example macros
 
 # Configuration file structure
-Each material has its own configuration file.
+Each hardware has its own configuration file.
 We can choose what parameters change, such as hotend/bed temperature, 
 pid values, or even things like minimum/maximum extrusion temperature.
 We can choose various different kinds of hardware to change with each macro, such as toolheads, nozzles, build surfaces, etc.\
@@ -30,11 +30,11 @@ printer.cfg now imports files from each directory as such:
 
 `[include MaterialSpecificConfigs/PLA001.cfg]` 
 
-Each hardware, one case being different printing materials, is identified by a hardware code. I write this code on each
+Each hardware, such as printing materials, is identified by a hardware code. I write this code on each
 spool so I know which macro to use upon switching rolls.
 The default form is AAA999, but can be set in the "HARDWARE_CODE_REGEX" entry 
 in _scriptConfig.py_. Config files are named `{HARDWARE_CODE}.cfg`,
-and contain a comment with their material code in the first line (Figure 1.3):
+and contain a comment with their hardware code in the first line (Figure 1.3):
 This is to ensure that we are not importing any files we did not mean to or edited by accident, and burning our house down in the process.
 
 Any value in the config files also present in printer.cfg will be overwritten by the entry in 
@@ -55,10 +55,10 @@ it is recommended to fully back up your configuration directory before proceedin
 always, USE AT YOUR OWN RISK! No guarantee comes with this software regarding safety.
 Please review the code before using it!!!**
 
-  1. Move whichever settings you change per material to a separate config file.
+  1. Move whichever settings you change per hardware to a separate config file.
 Each file must be named **{HARDWARE_CODE}.cfg** and start with a comment containing said code (see Figure 1.3).
 This is done to make sure we don't use files which we did not manually create for these purposes.
-You will need one config file for each material.
+You will need one config file for each hardware/material.
 File import hierarchy can still be applied here, note how in my example in Figure 1.3 I have separate files for the PID values,
 which I reuse across material config files.
 
@@ -94,7 +94,7 @@ command: python3 {SCRIPTS_PATH}/material_config_switch_use_case.py
 ```
   6. Change "**PRINTER_CONFIG_FILE**" in _scriptConfig.py_ to printer.cfg's location.
 
-  7. Create a macro for each material, as such
+  7. Create a macro for each hardware, as such
 ```cfg
 [gcode_macro PLA001]
 gcode:

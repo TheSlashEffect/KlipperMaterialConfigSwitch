@@ -18,14 +18,14 @@ class Config:
         self.hardware_directory = scriptConfig.modes[mode]
         self.hardware_directory_relative = os.path.basename(os.path.normpath(self.hardware_directory))
         self.printer_config_file_backup_extension = scriptConfig.PRINTER_CONFIG_FILE_BACKUP_EXTENSION
-        self.material_code_regex = scriptConfig.HARDWARE_CODE_REGEX
-        self.material_code_regex_example = scriptConfig.HARDWARE_CODE_REGEX_EXAMPLE
+        self.hardware_code_regex = scriptConfig.HARDWARE_CODE_REGEX
+        self.hardware_code_regex_example = scriptConfig.HARDWARE_CODE_REGEX_EXAMPLE
         self.printer_pipe_file = scriptConfig.PRINTER_PIPE_FILE
 
     def __init__(self, mode: str, hardware_code: str):
         self.printer_pipe_file = ''
-        self.material_code_regex_example = ''
-        self.material_code_regex = ''
+        self.hardware_code_regex_example = ''
+        self.hardware_code_regex = ''
         self.printer_config_file_backup_extension = ''
         self.hardware_directory = ''
         self.printer_config_file = ''
@@ -94,8 +94,8 @@ def read_file_content_as_lines(file_path: str) -> List[str]:
     return file_contents
 
 
-def print_material_code_regex() -> None:
-    sys.stderr.write('Configured material code regex is of form %s\n' % scriptConfig.HARDWARE_CODE_REGEX)
+def print_hardware_code_regex() -> None:
+    sys.stderr.write('Configured hardware code regex is of form %s\n' % scriptConfig.HARDWARE_CODE_REGEX)
     if scriptConfig.HARDWARE_CODE_REGEX_EXAMPLE != '':
         sys.stderr.write('Example: %s\n' % scriptConfig.HARDWARE_CODE_REGEX_EXAMPLE)
     sys.stderr.flush()
@@ -107,15 +107,15 @@ def check_user_input_validity(hardware_mode: str, user_input_code: str):
                              (hardware_mode, str([i for i in scriptConfig.modes])))
 
     if not re.match(scriptConfig.HARDWARE_CODE_REGEX, user_input_code):
-        sys.stderr.write('Input code error \'%s\'! Please provide a valid material code\n' % user_input_code)
-        print_material_code_regex()
+        sys.stderr.write('Input code error \'%s\'! Please provide a valid hardware code\n' % user_input_code)
+        print_hardware_code_regex()
         sys.exit(-1)
 
 
 def get_user_input_arguments(arguments: List[str]) -> tuple[str, str]:
     if len(arguments) < 3:
-        print('Usage: %s {mode} {material code}' % arguments[0])
-        print_material_code_regex()
+        print('Usage: %s {mode} {hardware_code}' % arguments[0])
+        print_hardware_code_regex()
         sys.exit(-1)
 
     hardware_mode = arguments[1]
