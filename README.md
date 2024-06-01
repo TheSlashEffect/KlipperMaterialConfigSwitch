@@ -85,12 +85,18 @@ and *hardware_type* being a hardware you want to switch between, in our example 
      Said paths are expressed relative to klipper's main config directory.
   5. In __printer.cfg__, add the following entries:
 ```cfg
-# One macro per hardware type
+# One initial value per hardware type you chose in scriptConfig.py
 [include MaterialSpecificConfig/PLA001.cfg]
+[include ToolheadSpecificConfig/TLH003.cfg]
 
-# Macro to call the driver script
+# Call the driver script
 [gcode_shell_command material_config_switch]
 command: python3 {SCRIPTS_PATH}/material_config_switch_use_case.py
+
+# Clear stored z_offset
+[gcode_macro clear_z_offset]
+gcode:
+    SAVE_VARIABLE VARIABLE=z_offset VALUE=0
 ```
   6. Change "**PRINTER_CONFIG_FILE**" in _scriptConfig.py_ to printer.cfg's location.
 
