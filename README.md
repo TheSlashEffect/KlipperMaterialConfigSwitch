@@ -84,18 +84,18 @@ gcode macro in printer.cfg. The value added here is read upon klipper restart.
   5. Add entries of the form `{mode, hardware_type}` items to the `modes` variable in _scriptConfig.py_ , where *mode* is an arbitrary name of your choice
 and *hardware_type* being a hardware you want to switch between, in our example printing materials.
      Said paths are expressed relative to klipper's main config directory.
-  6. Add an initial include directive for each hardware type in _printer.cfg_
-
-    [include MaterialSpecificConfig/PLA001.cfg]
-
-  7. Again, in printer.cfg, add the following macro. This calls the driver script.
+  6. In __printer.cfg__, add the following entries
 ```cfg
+# One macro per hardware type
+[include MaterialSpecificConfig/PLA001.cfg]
+
+# Macro to call the driver script
 [gcode_shell_command material_config_switch]
 command: python3 {SCRIPT_LOCATION}/material_config_switch_use_case.py
 ```
-  8. Change "**PRINTER_CONFIG_FILE**" in _scriptConfig.py_ to printer.cfg's location.
+  7. Change "**PRINTER_CONFIG_FILE**" in _scriptConfig.py_ to printer.cfg's location.
 
-  9. Create a macro for each material, as such
+  8. Create a macro for each material, as such
 ```cfg
 [gcode_macro PLA001]
 gcode:
@@ -104,8 +104,7 @@ gcode:
 where "m" is the mode and "PLA001" is the hardware code.
 
 ### Important!!!
-  10. **Make sure to enable `Disabled while printing` in order to not accidentally run 
-this and restart klipper mid-print.**
+  9. **Make sure to disable the macro while a printjob is running. In fluidd for example, check `Disabled while printing`**
 
 <img src="images/macroSettings.PNG" alt="drawing" width="500"/>
 
