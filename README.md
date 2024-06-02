@@ -20,7 +20,7 @@ pid values, or even things like minimum/maximum extrusion temperature.
 We can choose various different kinds of hardware to change with each macro, such as toolheads, nozzles, build surfaces, etc.\
 For each such hardware we create a mode-directory pair in _scriptConfig.py_, as such:
 
-    modes = {'-m': 'MaterialSpecificConfigs', '-t': 'ToolheadSpecificConfigs'}
+    modes = {'-m': 'MaterialSpecificConfigs', '-b': 'BuildplateSpecificConfigs'}
 
 
 ![](images/materialConfigView.PNG "")
