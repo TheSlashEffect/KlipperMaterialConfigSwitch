@@ -63,7 +63,8 @@ File import hierarchy can still be applied here, note how in my example in Figur
 which I reuse across material config files.
 
  ![](images/materialSpecificConfig.PNG "")
-* Figure 1.3: Example of hardware specific config file for a PLA roll
+*Figure 1.3: Example of hardware specific config file for a PLA roll*
+
 
 
   2. (Optional) One can add a per-material z_offset value as shown above (`position_endstop_diff =  1.6`). This value is 
