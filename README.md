@@ -109,11 +109,11 @@ gcode:
 ```
 where "m" is the mode and "PLA001" is the hardware code.
 
+You can also assign a colour to the macro in your UI of choice, so all your colours are shown in the browser.
+
+![](images/macroBrowserView.PNG "")
+
 ### Important!!!
 **Make sure to disable the macro while a printjob is running. For example in fluidd, check `Disabled while printing`**
 
 <img src="images/macroSettings.PNG" alt="drawing" width="500"/>
-
-You can also assign a colour to the macro, so all your colours are shown in the browser.
-
-![](images/macroBrowserView.PNG "")
