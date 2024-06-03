@@ -109,7 +109,7 @@ gcode:
 ```
 where "m" is the mode and "PLA001" is the hardware code.
 
-You can also assign a colour to the macro in your UI of choice, so all your colours are shown in the browser.
+You can also assign a colour to the macro in your UI of choice, so your filament colours are shown in the browser.
 
 ![](images/macroBrowserView.PNG "")
 
