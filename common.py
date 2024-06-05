@@ -118,8 +118,7 @@ def check_user_input_validity(hardware_mode: str, user_input_code: str):
 
 def get_user_input_arguments(arguments: List[str]) -> tuple[str, str]:
     if len(arguments) < 3:
-        print('Usage: %s {mode} {hardware_code}' % arguments[0])
-        print_hardware_code_regex()
+        print('Missing arguments in script\nUsage: %s {mode} {hardware_code}' % arguments[0])
         sys.exit(-1)
 
     hardware_mode = arguments[1]
