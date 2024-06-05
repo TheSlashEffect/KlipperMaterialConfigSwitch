@@ -77,11 +77,15 @@ def handle_file_write_error(config: Config, e: Exception) -> None:
     attempt_backup_recovery(config)
 
 
+def write_to_file(file_path: str, new_file_contents: List[str]) -> None:
+    klipper_config_file_write_stream = open(file_path, 'w')
+    klipper_config_file_write_stream.writelines(new_file_contents)
+    klipper_config_file_write_stream.close()
+
+
 def update_file_content(file_path: str, new_file_contents: List[str]) -> None:
     try:
-        klipper_config_file_write_stream = open(file_path, 'w')
-        klipper_config_file_write_stream.writelines(new_file_contents)
-        klipper_config_file_write_stream.close()
+        write_to_file(file_path, new_file_contents)
     except Exception as e:
         logging.warning(e)
         sys.exit(1)
